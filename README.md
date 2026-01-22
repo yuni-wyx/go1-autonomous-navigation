@@ -11,7 +11,7 @@ I collected real-world data with ROS (Melodic), trained a ResNet-18 vision model
 
 ## Technical Blog (GitHub Pages)
 Full write-up:
-- https://<YOUR_GITHUB_USERNAME>.github.io/<YOUR_REPO_NAME>/
+- https://yuni-wyx.github.io/go1-autonomous-navigation/
 
 ## Tech Stack
 ROS Melodic · Python · PyTorch · OpenCV · ResNet-18 · rosbag · Teleop/Joystick

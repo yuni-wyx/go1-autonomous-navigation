@@ -120,4 +120,5 @@ Training is only half the story — deployment on a real robot introduces practi
 ---
 
 ## Links
-- Code & assets: https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPO_NAME>
+- Code & assets: - https://yuni-wyx.github.io/go1-autonomous-navigation
+
