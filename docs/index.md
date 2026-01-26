@@ -39,7 +39,7 @@ This project is intentionally *systems-first*. I wanted hands-on experience with
 3. Train a vision-based model using ResNet-18
 4. Deploy the trained model back onto the Go1 and run inference on-robot
 
-*(Optional figure: `assets/pipeline.png`)*
+![Pipeline](assets/pipeline.png)
 
 ---
 
@@ -96,7 +96,7 @@ I trained a vision model using **ResNet-18** as the backbone to map camera image
 * Achieved strong validation performance
 * The model generalized well enough to be tested directly on the robot
 
-*(Optional: add metrics table, example predictions, or plots in `assets/results.png`)*
+![Results Summary](assets/results.png)
 
 ---
 
