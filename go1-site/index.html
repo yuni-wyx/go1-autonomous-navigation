@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Go1 | Robotics</title>
+  <meta name="description" content="Unitree Go1 robotics project website — perception, ROS, data, ML." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Techy font -->
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Favicon / Website Icon -->
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/favicon.png">
+</head>
+
+<body>
+  <!-- Top glow background -->
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="brand" href="#top">
+      <span class="brand-dot"></span>
+      <span>GO1 // CAIRO LAB</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#overview">Overview</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#results">Results</a>
+      <a href="#media">Media</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-left">
+        <div class="chip">
+          <span class="chip-pulse"></span>
+          Robotics • ROS • Computer Vision • PyTorch
+        </div>
+
+        <h1 class="title">
+          Unitree <span class="neon">Go1</span><br />
+          Vision-Based Navigation
+        </h1>
+
+        <p class="subtitle">
+          An end-to-end robotics project that brings an offline-trained vision model
+          onto a real quadruped robot.
+          From joystick teleoperation and rosbag data collection,
+          to training a ResNet-18 perception model,
+          and deploying it on Unitree Go1 for real-time inference and navigation.
+          <span class="hint">(Walking demo video will be added in the Media section.)</span>
+        </p>
+        
+        <div class="cta-row">
+          <a class="btn primary" href="#media">▶ Watch Demo</a>
+          <a class="btn ghost" href="#pipeline">See Pipeline</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-num" data-count="5000">0</div>
+            <div class="stat-label">Frames Collected</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" data-count="0.93">0</div>
+            <div class="stat-label">Best Accuracy</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" data-count="30">0</div>
+            <div class="stat-label">FPS On-Device</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="holo-card">
+          <div class="holo-header">
+            <span>LIVE TELEMETRY</span>
+            <span class="badge">SIM</span>
+          </div>
+
+          <div class="holo-body">
+            <div class="meter">
+              <div class="meter-top">
+                <span>Traversability</span>
+                <span id="m1v">72%</span>
+              </div>
+              <div class="bar"><div class="bar-fill" id="m1"></div></div>
+            </div>
+
+            <div class="meter">
+              <div class="meter-top">
+                <span>Obstacle Risk</span>
+                <span id="m2v">18%</span>
+              </div>
+              <div class="bar"><div class="bar-fill warn" id="m2"></div></div>
+            </div>
+
+            <div class="meter">
+              <div class="meter-top">
+                <span>Stability</span>
+                <span id="m3v">88%</span>
+              </div>
+              <div class="bar"><div class="bar-fill" id="m3"></div></div>
+            </div>
+
+            <div class="terminal">
+              <div class="terminal-line"><span class="k">rosbag</span> record /camera/image_raw /tf /cmd_vel</div>
+              <div class="terminal-line"><span class="k">extract</span> images → label → train resnet18</div>
+              <div class="terminal-line"><span class="k">deploy</span> on Go1 → realtime inference</div>
+              <div class="terminal-line dim" id="terminalBlink">_</div>
+            </div>
+          </div>
+
+          <div class="holo-glow" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OVERVIEW -->
+    <section id="overview" class="section">
+      <div class="section-head">
+        <h2>Overview</h2>
+        <p>
+          This project focuses on completing the full robotics learning loop:
+          data collection, model training, on-robot deployment,
+          and real-world validation.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card">
+          <h3>Data Collection</h3>
+          <p>
+            The Go1 robot is manually controlled via joystick teleoperation while
+            recording rosbag files.
+            Camera streams are extracted from rosbag and converted into
+            structured datasets for training.
+          </p>
+          <div class="tag-row">
+            <span class="tag">ROS</span><span class="tag">rosbag</span><span class="tag">teleop</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Perception Model</h3>
+          <p>
+            A ResNet-18 model is trained in PyTorch to classify
+            traversable regions and obstacles from onboard camera images,
+            with emphasis on inference speed and robustness.
+          </p>
+          <div class="tag-row">
+            <span class="tag">PyTorch</span><span class="tag">ResNet-18</span><span class="tag">OpenCV</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>On-Robot Deployment</h3>
+          <p>
+            The trained model is deployed as a ROS inference node on Go1,
+            performing real-time perception and feeding decisions into
+            the robot’s motion control pipeline.
+          </p>
+          <div class="tag-row">
+            <span class="tag">Realtime</span><span class="tag">ROS Node</span><span class="tag">Latency</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+
+    <!-- PIPELINE -->
+    <section id="pipeline" class="section">
+      <div class="section-head">
+        <h2>Pipeline</h2>
+        <p>
+          A clear end-to-end workflow from real-world data collection
+          to on-robot inference and validation.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="step">
+          <div class="step-dot"></div>
+          <div class="step-body">
+            <h3>1) Teleoperation & Recording</h3>
+            <p>
+              The Go1 robot is manually controlled using a joystick while recording
+              rosbag files containing camera, TF, and motion-related topics.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-dot"></div>
+          <div class="step-body">
+            <h3>2) Frame Extraction</h3>
+            <p>
+              Camera frames are extracted from rosbag recordings and organized into
+              structured datasets with train/validation/test splits.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-dot"></div>
+          <div class="step-body">
+            <h3>3) Model Training</h3>
+            <p>
+              A ResNet-18 model is trained using PyTorch with data augmentation
+              and class balancing.
+              Model performance is evaluated offline to select the best checkpoint.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-dot"></div>
+          <div class="step-body">
+            <h3>4) On-Robot Deployment</h3>
+            <p>
+              The trained model is integrated into a ROS node for real-time inference.
+              Predictions are post-processed into motion decisions
+              such as forward movement, stopping, or turning.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- RESULTS -->
+    <section id="results" class="section">
+      <div class="section-head">
+        <h2>Results</h2>
+        <p>
+          Initial results demonstrate the feasibility of deploying
+          a vision-based perception model on a real quadruped robot.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>Metrics</h3>
+          <div class="metric-row">
+            <span>Accuracy</span>
+            <span class="mono" id="accText">0.93</span>
+          </div>
+          <div class="metric-row">
+            <span>Inference Latency</span>
+            <span class="mono" id="latText">33 ms</span>
+          </div>
+          <div class="metric-row">
+            <span>Throughput</span>
+            <span class="mono" id="fpsText">30 FPS</span>
+          </div>
+          <p class="note">
+            Metrics shown here are placeholders and will be replaced
+            with measured on-robot results.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>Observations & Next Steps</h3>
+          <ul class="bullets">
+            <li>
+              Offline validation accuracy does not fully capture real-world behavior;
+              inference latency and stability are critical on hardware.
+            </li>
+            <li>
+              Performance is affected by lighting changes, surface texture,
+              and motion-induced blur.
+            </li>
+            <li>
+              Future work includes temporal smoothing, sequence-based models,
+              and experimenting with diffusion policies or VLA-style architectures.
+            </li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+
+    <!-- MEDIA -->
+    <section id="media" class="section">
+      <div class="section-head">
+        <h2>Media</h2>
+        <p>
+          Demonstration videos of Go1 walking and navigating using the
+          deployed perception model.
+        </p>
+      </div>
+
+      <div class="media-card">
+        <div class="media-top">
+          <div class="media-title">
+            <span class="pulse-dot"></span>
+            <span>Go1 Walking Demo</span>
+          </div>
+
+          <div class="media-actions">
+            <button class="btn small ghost" id="useLocal">Use local mp4</button>
+            <button class="btn small ghost" id="useYT">Use YouTube</button>
+          </div>
+        </div>
+
+        <div class="media-body" id="mediaBody">
+          <!-- JS will render video/iframe here -->
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span class="mono">©</span> <span id="year"></span> GO1 / CAIRO LAB — Built by Yuni Wu
+      </div>
+      <div class="footer-right">
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

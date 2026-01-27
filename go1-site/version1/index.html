@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Go1 — Robotics</title>
+  <meta name="description" content="Go1 robotics project: ROS + vision + ML, data collection and deployment." />
+  <link rel="stylesheet" href="./styles.css" />
+
+  <!-- Favicon / Website Icon -->
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/favicon.png">
+</head>
+
+<body>
+  <!-- Background effects -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- Top Nav -->
+  <header class="nav">
+    <a class="brand" href="#top">
+      <span class="brand-dot"></span>
+      <span class="brand-text">GO1</span>
+      <span class="brand-sub">Robotics</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#results">Results</a>
+      <a href="#video">Video</a>
+      <a href="#notes">Notes</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#about">About</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#results">Results</a>
+    <a href="#video">Video</a>
+    <a href="#notes">Notes</a>
+  </div>
+
+  <!-- Hero -->
+  <main id="top" class="container">
+    <section class="hero">
+      <div class="hero-left">
+        <div class="pill">
+          <span class="pill-dot"></span>
+          <span>ROS • Vision • ML • Real-time</span>
+        </div>
+
+        <h1 class="hero-title">
+          Go1 <span class="accent">Autonomous</span><br/>
+          Navigation & Perception
+        </h1>
+
+        <p class="hero-desc">
+          以 Unitree Go1 為平台，從 <b>teleop + rosbag</b> 收集影像資料，
+          訓練 vision model 並部署到 ROS pipeline，讓機器狗能在室內環境做更穩定的決策。
+        </p>
+
+        <div class="hero-cta">
+          <a class="btn primary" href="#video">
+            ▶ 看 Demo
+          </a>
+          <a class="btn ghost" href="#pipeline">
+            查看技術流程
+          </a>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-num" data-count="1">0</div>
+            <div class="stat-label">Robot Platform</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" data-count="3">0</div>
+            <div class="stat-label">Core Modules</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" data-count="93">0</div>
+            <div class="stat-label">Peak Accuracy (%)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hero-card-top">
+            <div class="chip">SYSTEM STATUS</div>
+            <div class="status">
+              <span class="status-dot"></span>
+              <span id="statusText">online</span>
+            </div>
+          </div>
+
+          <div class="scan">
+            <div class="scan-line" aria-hidden="true"></div>
+            <div class="scan-body">
+              <div class="scan-item"><span class="k">Node</span><span class="v">/go1_perception</span></div>
+              <div class="scan-item"><span class="k">Topic</span><span class="v">/camera/image_raw</span></div>
+              <div class="scan-item"><span class="k">Model</span><span class="v">ResNet-18</span></div>
+              <div class="scan-item"><span class="k">Latency</span><span class="v"><span id="latency">—</span> ms</span></div>
+              <div class="scan-item"><span class="k">FPS</span><span class="v"><span id="fps">—</span></span></div>
+            </div>
+          </div>
+
+          <div class="hero-card-bottom">
+            <div class="tiny">Last update:</div>
+            <div class="mono" id="lastUpdate">—</div>
+          </div>
+        </div>
+
+        <div class="hero-image">
+          <!-- 可選：放你自己的 hero 圖 -->
+          <img src="./assets/go1-hero.jpg" alt="Go1 robot" onerror="this.style.display='none'" />
+          <div class="hero-placeholder" aria-hidden="true">
+            <div class="pulse-ring"></div>
+            <div class="pulse-core"></div>
+            <div class="placeholder-text">GO1 VISUAL CORE</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="section reveal">
+    <div class="section-head">
+        <h2>About this project</h2>
+        <p>
+        目標是把「離線訓練的 vision model」真正放到 Unitree Go1 上跑，
+        完成從資料收集 → 模型訓練 → ROS 部署 → 實機驗證的端到端閉環。
+        </p>
+    </div>
+
+    <div class="grid-3">
+        <article class="card">
+        <h3>Motivation</h3>
+        <p>
+            我想更深入理解 Robotics 與 embodied ML：不只是做出高準確率模型，
+            而是面對真實機器人的即時性、感測噪聲、光線/地面變化與系統整合挑戰。
+        </p>
+        </article>
+
+        <article class="card">
+        <h3>Data Collection (Teleop + ROS)</h3>
+        <p>
+            透過 joystick/teleop 操控 Go1，在室內不同路徑與場景錄製 rosbag。
+            之後從 rosbag 抽取 camera frames，整理成可訓練的 dataset，
+            建立穩定可重複的資料管線。
+        </p>
+        </article>
+
+        <article class="card">
+        <h3>Model + Deployment</h3>
+        <p>
+            使用 PyTorch 訓練 ResNet-18 做 traversability / obstacle 等視覺判斷，
+            並封裝成 ROS node 進行即時推論，將輸出訊號接回控制流程，
+            在 Go1 上完成端到端的實機測試。
+        </p>
+        </article>
+    </div>
+    </section>
+
+
+    <!-- Pipeline -->
+    <section id="pipeline" class="section reveal">
+    <div class="section-head">
+        <h2>Pipeline</h2>
+        <p>
+        End-to-end workflow：從 Go1 實機資料收集，到模型訓練與 ROS 部署，再回到機器人上做迭代驗證。
+        </p>
+    </div>
+
+    <div class="timeline">
+        <div class="t-item">
+        <div class="t-badge">01</div>
+        <div class="t-content">
+            <h3>Teleop + Rosbag Recording</h3>
+            <p>
+            使用 joystick/teleop 手動操控 Go1，在室內環境走不同路徑（直線、轉彎、狹窄通道、障礙物附近），
+            同步錄製 rosbag（camera topics + 必要的狀態訊號），確保資料可重播與可追蹤。
+            </p>
+            <div class="tags">
+            <span class="tag">ROS</span><span class="tag">teleop</span><span class="tag">rosbag</span>
+            </div>
+        </div>
+        </div>
+
+        <div class="t-item">
+        <div class="t-badge">02</div>
+        <div class="t-content">
+            <h3>Frame Extraction + Dataset Build</h3>
+            <p>
+            從 rosbag 抽取影像 frames（依固定頻率或事件觸發），做基本清理（去重、模糊/過暗過曝檢查），
+            並整理成訓練資料夾結構，方便後續標註與版本管理。
+            </p>
+            <div class="tags">
+            <span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">dataset</span>
+            </div>
+        </div>
+        </div>
+
+        <div class="t-item">
+        <div class="t-badge">03</div>
+        <div class="t-content">
+            <h3>Labeling + Train/Val Split</h3>
+            <p>
+            依任務定義標註（例如 traversable / obstacle / uncertain），並建立一致的 train/val split，
+            避免同一段連續畫面同時出現在 train 與 val 造成資料洩漏；同時追蹤 class imbalance 狀況。
+            </p>
+            <div class="tags">
+            <span class="tag">labeling</span><span class="tag">data split</span><span class="tag">imbalance</span>
+            </div>
+        </div>
+        </div>
+
+        <div class="t-item">
+        <div class="t-badge">04</div>
+        <div class="t-content">
+            <h3>Model Training + Evaluation</h3>
+            <p>
+            使用 PyTorch 訓練 ResNet-18，進行 offline evaluation（accuracy、confusion matrix、錯誤案例），
+            並針對 failure cases 回頭補資料或調整資料分佈，形成「資料 ↔ 模型」的迭代循環。
+            </p>
+            <div class="tags">
+            <span class="tag">PyTorch</span><span class="tag">ResNet-18</span><span class="tag">evaluation</span>
+            </div>
+        </div>
+        </div>
+
+        <div class="t-item">
+        <div class="t-badge">05</div>
+        <div class="t-content">
+            <h3>ROS Inference Node + On-Robot Test</h3>
+            <p>
+            將模型封裝成 ROS node，訂閱相機 topic，做即時推論並輸出 decision signal，
+            監控推論延遲（latency）與 FPS，確保能在實機上穩定運行；再根據實測結果持續迭代。
+            </p>
+            <div class="tags">
+            <span class="tag">deployment</span><span class="tag">real-time</span><span class="tag">latency</span>
+            </div>
+        </div>
+        </div>
+    </div>
+    </section>
+
+
+    <!-- Results -->
+    <section id="results" class="section reveal">
+    <div class="section-head">
+        <h2>Results</h2>
+        <p>
+        專案已完成從離線訓練到實機部署的基本閉環，並在真實機器人環境中驗證可行性。
+        </p>
+    </div>
+
+    <div class="grid-2">
+        <div class="card">
+        <h3>What worked</h3>
+        <ul class="list">
+            <li>
+            成功完成影像模型的離線訓練與驗證，模型在 validation set 上達到穩定表現，
+            並能區分可行走區域與潛在障礙。
+            </li>
+            <li>
+            將訓練完成的模型封裝為 ROS inference node，
+            可即時訂閱相機 topic 並在 Go1 上穩定推論。
+            </li>
+            <li>
+            建立可重複的資料流程（teleop → rosbag → frame extraction），
+            為後續資料擴充與模型迭代打下基礎。
+            </li>
+        </ul>
+        </div>
+
+        <div class="card">
+        <h3>Engineering insights & next steps</h3>
+        <ul class="list">
+            <li>
+            Offline accuracy 並不完全等同於 on-robot 表現，
+            推論延遲、影像模糊與感測噪聲會直接影響決策穩定度。
+            </li>
+            <li>
+            計畫加入 Go1 自主行走 demo 影片，並系統性分析 failure cases
+            （例如光線變化、邊緣地面與動態障礙）。
+            </li>
+            <li>
+            未來將嘗試 diffusion policy 或 VLA 架構，
+            朝向更 end-to-end 的 perception-to-action 控制流程發展。
+            </li>
+        </ul>
+        </div>
+    </div>
+    </section>
+
+
+    <!-- Video -->
+    <section id="video" class="section reveal">
+      <div class="section-head">
+        <h2>Demo Video</h2>
+        <p>之後把 Go1 行走影片放到 <span class="mono">assets/go1-walk.mp4</span> 就會自動顯示。</p>
+      </div>
+
+      <div class="video-card">
+        <div class="video-top">
+          <div class="chip">GO1 WALK DEMO</div>
+          <button class="btn small" id="videoToggle">▶ Play</button>
+        </div>
+
+        <video
+          id="demoVideo"
+          class="video"
+          controls
+          preload="metadata"
+          poster="./assets/poster.jpg"
+        >
+          <source src="./assets/go1-walk.mov" type="video/mp4" />
+          你的瀏覽器不支援 video tag。
+        </video>
+
+        <div class="video-hint" id="videoHint">
+          如果你還沒放影片：把檔案命名成 <b>go1-walk.mp4</b> 放進 assets/ 就好。
+        </div>
+      </div>
+    </section>
+
+    <!-- Notes -->
+    <section id="notes" class="section reveal">
+    <div class="section-head">
+        <h2>Notes / Links</h2>
+        <p>
+        專案相關程式碼與技術紀錄，皆集中於 GitHub，方便版本控管與後續延伸。
+        </p>
+    </div>
+
+    <div class="grid-3">
+        <a
+        class="card link-card"
+        href="https://github.com/yuni-wyx/go1-autonomous-navigation/tree/main"
+        target="_blank"
+        rel="noreferrer"
+        >
+        <h3>GitHub Repository</h3>
+        <p>
+            完整專案程式碼：ROS nodes、資料處理 scripts、模型訓練與部署流程。
+        </p>
+        <span class="arrow">↗</span>
+        </a>
+
+        <a
+        class="card link-card"
+        href="https://github.com/yuni-wyx/go1-autonomous-navigation/tree/main/docs"
+        target="_blank"
+        rel="noreferrer"
+        >
+        <h3>Project Notes (GitHub Docs)</h3>
+        <p>
+            專案紀錄與技術筆記，包含設計決策、實作細節與過程中遇到的問題與反思。
+        </p>
+        <span class="arrow">↗</span>
+        </a>
+
+        <div class="card">
+        <h3>Dataset Notes</h3>
+        <p>
+            資料集目前仍在持續擴充與整理中，
+            後續將補上更完整的收集、標註與資料分佈說明。
+        </p>
+        </div>
+    </div>
+    </section>
+
+
+    <footer class="footer">
+      <div class="mono">© <span id="year"></span> Yuni’s Robotics Portfolio</div>
+      <div class="tiny">Built with HTML/CSS/JS • Neon tech theme</div>
+    </footer>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>
