@@ -4,4 +4,5 @@ node_modules
 __pycache__
 *.mov
 assets/*.mov
-go1-site/assets/*.mov
+go1-site/assets/*.movgo1-site/assets/go1-walk.mov
+*.mov
