@@ -6,3 +6,4 @@ __pycache__
 assets/*.mov
 go1-site/assets/*.movgo1-site/assets/go1-walk.mov
 *.mov
+go1-site/version1
