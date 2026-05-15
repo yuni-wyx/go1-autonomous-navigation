@@ -257,7 +257,7 @@
   // -----------------------------
   // Optional: highlight nav link on scroll (lightweight)
   // -----------------------------
-  const sections = ["overview", "pipeline", "results", "media"]
+  const sections = ["overview", "timeline", "results", "deployment", "media"]
     .map((id) => document.getElementById(id))
     .filter(Boolean);
 

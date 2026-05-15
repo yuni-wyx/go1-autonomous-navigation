@@ -1,86 +1,105 @@
-## Data Pipeline (Teleoperation + rosbag → Dataset)
+# Data Evolution
 
-This section describes how raw robot experience was collected and transformed into a supervised learning dataset for training a vision-based policy.
+## Page Summary
 
----
+The Go1 work uses two related but distinct kinds of data:
 
-### Recording
-
-I collected data by manually teleoperating the Unitree Go1 using a joystick while recording ROS topics with `rosbag`. This approach allowed me to efficiently gather realistic robot data under natural operating conditions.
-
-#### Topics Recorded
-
-* **Camera stream**: `/camera/image_raw`
-
-  * Primary perception input used for learning
-* **Motion commands**: `/cmd_vel` (`geometry_msgs/Twist`)
-
-  * Used as supervision targets: `[vx, vy, wz]`
-
-#### Recommended Duration per Bag
-
-* **3–8 minutes per rosbag**
-* Shorter bags make it easier to:
-
-  * Inspect data quality
-  * Discard corrupted segments
-  * Iterate quickly during recollection
-
-#### Tips for Data Coverage
-
-To improve dataset diversity and generalization:
-
-* Vary **lighting conditions** (bright, dim, mixed shadows)
-* Record on different **floor surfaces** (smooth, reflective, textured)
-* Include **turning behaviors** (left/right curves, corridor intersections)
-* Capture dynamic elements (e.g., **people walking through the scene**)
-* Avoid long segments of identical motion (e.g., straight-line driving only)
+- **Phase 1 data:** low-level supervision for robot movement
+- **Phase 2 data:** decision-level supervision for social navigation reasoning
 
 ---
 
-### Extraction
+## Part A: Imitation-Learning Data
 
-Recorded rosbag files were processed offline to convert raw ROS messages into a training-ready dataset.
+### What this data is
 
-#### Bag → Frames
+The earlier project relies on Go1 teleoperation and ROS bag recording.
+While manually driving the robot, I record the visual stream and the corresponding motion commands so the model can learn navigation behavior from real robot experience.
 
-* Parsed `sensor_msgs/Image` messages from rosbag
-* Converted ROS image messages into standard image arrays
-* Saved frames to disk using OpenCV
-* Used message timestamps to preserve temporal alignment
+### Typical supervision
 
-#### Folder Structure
+- front-camera imagery
+- motion-command labels such as `vx`, `vy`, and `wz`
+- timestamp alignment between frames and control commands
 
-The extracted dataset follows a simple, ML-friendly structure:
+### What these labels mean
 
-```
-data_no_ros/
-├── images/
-│   ├── 1760135562.140430.png
-│   ├── 1760135550.344453.png
-│   └── ...
-└── labels.csv
-```
+These are **low-level control labels**.
+They describe how the robot moved, not how a scene should be interpreted socially.
 
-* **images/**: RGB frames extracted from the camera stream
-* **labels.csv**: Per-frame motion labels with columns:
+### Why this data was useful
 
-  * `fname`, `vx`, `vy`, `wz`
+It captures:
 
-#### Timestamp Alignment
+- corridor following
+- turning behavior
+- stop / go behavior in practice
+- real sensor noise, motion blur, and environmental variation
 
-* Image frames and motion commands were aligned using **nearest-neighbor matching in time**
-* This ensures each image is paired with the most relevant control command issued during teleoperation
+This is the data foundation for a deployable visual controller.
 
 ---
 
-### Data Cleaning
+## Part B: VLM Social-Navigation Benchmark Data
 
-Before training, the dataset was lightly filtered to improve signal quality:
+### What this data is
 
-* Verified image integrity (no corrupted or unreadable frames)
-* Checked for obvious motion blur or extreme lighting artifacts
-* Ensured all label values (`vx`, `vy`, `wz`) were numeric and well-formed
-* Optionally removed or down-weighted long static segments with near-zero motion
+The later capstone uses a curated benchmark of **13 Go1 rosbag scenarios**.
+These bags are labeled at the **decision level**, not the low-level control level.
 
-The goal was not heavy curation, but **maintaining a clean and realistic dataset** that reflects real robot operation.
+### Extraction pipeline
+
+- extract front-camera frames from each bag
+- assemble short temporal windows for evaluation
+- feed either single frames or capped sequences to the VLM
+
+### Final benchmark configuration
+
+- sequence window length = `10`
+- maximum frames per VLM call = `5`
+- sequence sampling mode = capped temporal subsampling
+
+This means each candidate window spans 10 ordered frames, but at inference time only up to 5 evenly spaced frames are actually passed to the VLM.
+
+### Scenario coverage
+
+The benchmark includes:
+
+- no person / empty path
+- centered frontal person
+- person on the left or right side
+- right-to-left and left-to-right crossing
+- approaching person
+- receding person
+- person entering the frame late
+- two-person scenes
+- review-oriented ambiguous cases
+
+### What these labels mean
+
+These are **decision-level labels** for high-level social behavior:
+
+- `STOP`
+- `FORWARD`
+- `LEFT`
+- `RIGHT`
+- `REVIEW`
+
+They do not specify exact motor commands.
+They evaluate whether the semantic policy interprets the scene correctly.
+
+---
+
+## Why the Data Changed
+
+### Phase 1 question
+
+How did the robot move?
+
+### Phase 2 question
+
+How should the robot interpret a socially meaningful scene?
+
+### Why that matters
+
+The change in data is what enables the project to move from low-level visual imitation toward higher-level social decision making.

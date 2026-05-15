@@ -4,22 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Go1 | Robotics</title>
-  <meta name="description" content="Unitree Go1 robotics project website — perception, ROS, data, ML." />
+  <meta name="description" content="Unitree Go1 research portfolio — from imitation learning to VLM-based social decision making." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Techy font -->
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Favicon / Website Icon -->
   <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/favicon.png">
 </head>
 
 <body>
-  <!-- Top glow background -->
   <div class="bg-grid" aria-hidden="true"></div>
 
   <header class="nav">
@@ -30,8 +27,9 @@
 
     <nav class="nav-links" aria-label="Primary">
       <a href="#overview">Overview</a>
-      <a href="#pipeline">Pipeline</a>
+      <a href="#timeline">Timeline</a>
       <a href="#results">Results</a>
+      <a href="#deployment">Deployment</a>
       <a href="#media">Media</a>
     </nav>
 
@@ -41,45 +39,47 @@
   </header>
 
   <main id="top">
-    <!-- HERO -->
     <section class="hero">
       <div class="hero-left">
         <div class="chip">
           <span class="chip-pulse"></span>
-          Robotics • ROS • Computer Vision • PyTorch
+          Robotics • ROS • Imitation Learning • VLM Social Navigation
         </div>
 
         <h1 class="title">
-          Unitree <span class="neon">Go1</span><br />
-          Vision-Based Navigation
+          Go1 Autonomous Navigation:<br />
+          <span class="neon">From Imitation Learning to Social AI</span>
         </h1>
 
-        <p class="subtitle">
-          An end-to-end robotics project that brings an offline-trained vision model
-          onto a real quadruped robot.
-          From joystick teleoperation and rosbag data collection,
-          to training a ResNet-18 perception model,
-          and deploying it on Unitree Go1 for real-time inference and navigation.
-          <span class="hint">(Walking demo video will be added in the Media section.)</span>
+        <p class="hero-lead">
+          A two-phase system that evolves from real-time learned control to VLM-based social decision making.
         </p>
-        
+
+        <p class="subtitle">
+          This project first deploys a real-time imitation-learning controller on Unitree Go1, then extends it with a VLM-based decision layer for human-aware navigation. The final system combines a fast controller with a slower semantic reasoning module.
+        </p>
+
+        <p class="hero-detail">
+          <strong>Phase 1</strong> focuses on on-robot execution with compact visual policies. <strong>Phase 2</strong> reframes the problem as an offline social-navigation benchmark using pretrained VLMs. The VLM path is presented as advisory and safety-projected, not as raw closed-loop robot control.
+        </p>
+
         <div class="cta-row">
-          <a class="btn primary" href="#media">▶ Watch Demo</a>
-          <a class="btn ghost" href="#pipeline">See Pipeline</a>
+          <a class="btn primary" href="#timeline">See Research Progression</a>
+          <a class="btn ghost" href="#results">View Key Results</a>
         </div>
 
         <div class="stats">
           <div class="stat">
-            <div class="stat-num" data-count="6900">0</div>
-            <div class="stat-label">Frames Collected</div>
+            <div class="stat-num" data-count="2">0</div>
+            <div class="stat-label">Project Phases</div>
           </div>
           <div class="stat">
-            <div class="stat-num" data-count="0.94">0</div>
-            <div class="stat-label">Best Accuracy</div>
+            <div class="stat-num" data-count="13">0</div>
+            <div class="stat-label">Curated Social-Nav Bags</div>
           </div>
           <div class="stat">
-            <div class="stat-num" data-count="30">0</div>
-            <div class="stat-label">FPS On-Device</div>
+            <div class="stat-num" data-count="5">0</div>
+            <div class="stat-label">VLM Action Classes</div>
           </div>
         </div>
       </div>
@@ -87,11 +87,16 @@
       <div class="hero-right">
         <div class="holo-card">
           <div class="holo-header">
-            <span>LIVE TELEMETRY</span>
-            <span class="badge">SIM</span>
+            <span>PHASE 1 TELEMETRY</span>
+            <span class="badge">GO1</span>
           </div>
 
           <div class="holo-body">
+            <div class="panel-kicker">Phase 1: Real-Time Reactive Navigation Metrics</div>
+            <p class="panel-note">
+              These signals describe low-level motion and safety behavior. They are important for reactive navigation, but they are not the full story for human-aware social decisions.
+            </p>
+
             <div class="meter">
               <div class="meter-top">
                 <span>Traversability</span>
@@ -117,9 +122,9 @@
             </div>
 
             <div class="terminal">
-              <div class="terminal-line"><span class="k">rosbag</span> record /camera/image_raw /tf /cmd_vel</div>
-              <div class="terminal-line"><span class="k">extract</span> images → label → train resnet18</div>
-              <div class="terminal-line"><span class="k">deploy</span> on Go1 → realtime inference</div>
+              <div class="terminal-line"><span class="k">phase_1</span> reactive safety signals for learned low-level control</div>
+              <div class="terminal-line"><span class="k">phase_2</span> semantic reasoning for people, crossings, and ambiguity</div>
+              <div class="terminal-line"><span class="k">system</span> fast controller + slow semantic reasoner</div>
               <div class="terminal-line dim" id="terminalBlink">_</div>
             </div>
           </div>
@@ -129,76 +134,104 @@
       </div>
     </section>
 
-    <!-- OVERVIEW -->
     <section id="overview" class="section">
       <div class="section-head">
         <h2>Overview</h2>
         <p>
-          This project focuses on completing the full robotics learning loop:
-          data collection, model training, on-robot deployment,
-          and real-world validation.
+          One continuous Go1 research story: first learn to move robustly in real time, then learn to interpret human scenes more semantically and safely.
         </p>
       </div>
 
       <div class="grid-3">
         <article class="card">
-          <h3>Data Collection</h3>
-          <p>
-            The Go1 robot is manually controlled via joystick teleoperation while
-            recording rosbag files.
-            Camera streams are extracted from rosbag and converted into
-            structured datasets for training.
-          </p>
+          <h3>Phase 1: Learning to Move</h3>
+          <p><strong>What this does:</strong> trains and deploys a real-time imitation-learning controller for low-level Go1 navigation behavior.</p>
+          <ul class="bullets compact">
+            <li>Uses Go1 rosbag + teleoperation supervision</li>
+            <li>Works with reactive signals such as traversability, obstacle risk, and stability</li>
+          </ul>
           <div class="tag-row">
-            <span class="tag">ROS</span><span class="tag">rosbag</span><span class="tag">teleop</span>
+            <span class="tag">ResNet-18</span><span class="tag">GRU / History</span><span class="tag">ROS</span>
           </div>
         </article>
 
         <article class="card">
-          <h3>Perception Model</h3>
-          <p>
-            A ResNet-18 model is trained in PyTorch to classify
-            traversable regions and obstacles from onboard camera images,
-            with emphasis on inference speed and robustness.
-          </p>
+          <h3>Why Move Beyond Imitation Learning?</h3>
+          <p><strong>Why it matters:</strong> social navigation is not only about motion replication; it also requires interpretable decisions around people.</p>
+          <ul class="bullets compact">
+            <li>Binary stop/go is too coarse for crossing and ambiguity</li>
+            <li>The robot needs a clearer semantic reason for yielding or deferring</li>
+          </ul>
           <div class="tag-row">
-            <span class="tag">PyTorch</span><span class="tag">ResNet-18</span><span class="tag">OpenCV</span>
+            <span class="tag">Interpretability</span><span class="tag">Human Motion</span><span class="tag">Ambiguity</span>
           </div>
         </article>
 
         <article class="card">
-          <h3>On-Robot Deployment</h3>
-          <p>
-            The trained model is deployed as a ROS inference node on Go1,
-            performing real-time perception and feeding decisions into
-            the robot’s motion control pipeline.
-          </p>
+          <h3>Phase 2: Learning When and How to Yield</h3>
+          <p><strong>Key design choice:</strong> use pretrained VLMs as a high-level social decision layer rather than as raw robot control.</p>
+          <ul class="bullets compact">
+            <li>Offline benchmark over curated Go1 rosbag scenarios</li>
+            <li>Action space: <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span></li>
+          </ul>
           <div class="tag-row">
-            <span class="tag">Realtime</span><span class="tag">ROS Node</span><span class="tag">Latency</span>
+            <span class="tag">Qwen3-VL-30B</span><span class="tag">InternVL-3.5-14B</span><span class="tag">Offline Benchmark</span>
           </div>
         </article>
       </div>
     </section>
 
-
-    <!-- PIPELINE -->
-    <section id="pipeline" class="section">
+    <section id="timeline" class="section">
       <div class="section-head">
-        <h2>Pipeline</h2>
+        <h2>Timeline</h2>
         <p>
-          A clear end-to-end workflow from real-world data collection
-          to on-robot inference and validation.
+          The fastest way to understand the project is as a three-step progression.
         </p>
       </div>
 
-      <div class="timeline">
+      <div class="phase-strip">
+        <article class="phase-card">
+          <div class="phase-kicker">Phase 1</div>
+          <h3>Learning to Move</h3>
+          <p class="phase-goal">Goal: deploy a compact learned controller on Go1 for real-time reactive navigation.</p>
+          <ul class="bullets compact">
+            <li>Reactive intelligence built around traversability, obstacle risk, and stability</li>
+            <li>Imitation-learning pipeline optimized for low latency and stable on-robot execution</li>
+          </ul>
+        </article>
+
+        <div class="phase-arrow" aria-hidden="true">→</div>
+
+        <article class="phase-card">
+          <div class="phase-kicker">Phase 2</div>
+          <h3>Learning When and How to Yield</h3>
+          <p class="phase-goal">Goal: add semantic social reasoning for people, crossings, yielding, and review cases.</p>
+          <ul class="bullets compact">
+            <li>Human-aware navigation with pretrained VLMs over curated Go1 scenarios</li>
+            <li>Structured actions: <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span></li>
+          </ul>
+        </article>
+
+        <div class="phase-arrow" aria-hidden="true">→</div>
+
+        <article class="phase-card highlight">
+          <div class="phase-kicker">Final System</div>
+          <h3>Fast Controller + Slow Semantic Reasoner</h3>
+          <p class="phase-goal">Goal: separate low-level execution from higher-level social interpretation.</p>
+          <ul class="bullets compact">
+            <li>Fast controller remains responsible for real-time safety and motion</li>
+            <li>VLM layer provides slower advisory social decisions and review signals</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="timeline detail-timeline">
         <div class="step">
           <div class="step-dot"></div>
           <div class="step-body">
-            <h3>1) Teleoperation & Recording</h3>
+            <h3>Phase 1: Real-Time Imitation Learning Navigation</h3>
             <p>
-              The Go1 robot is manually controlled using a joystick while recording
-              rosbag files containing camera, TF, and motion-related topics.
+              I collected Go1 rosbag data under teleoperation, extracted image and motion pairs, trained visual navigation policies, and deployed them as real-time ROS inference nodes. This phase emphasized low latency, smoothing, safety clipping, and stable on-robot behavior.
             </p>
           </div>
         </div>
@@ -206,10 +239,9 @@
         <div class="step">
           <div class="step-dot"></div>
           <div class="step-body">
-            <h3>2) Frame Extraction</h3>
+            <h3>Transition: Why a Semantic Decision Layer Was Needed</h3>
             <p>
-              Camera frames are extracted from rosbag recordings and organized into
-              structured datasets with train/validation/test splits.
+              Once the robot could execute low-level movement, the harder issue became deciding what to do around people. Social scenes require reasoning about position, motion, crossing direction, and uncertainty. That is where imitation-style low-level outputs become difficult to interpret and audit.
             </p>
           </div>
         </div>
@@ -217,89 +249,156 @@
         <div class="step">
           <div class="step-dot"></div>
           <div class="step-body">
-            <h3>3) Model Training</h3>
+            <h3>Phase 2: VLM Social Navigation Capstone</h3>
             <p>
-              A ResNet-18 model is trained using PyTorch with data augmentation
-              and class balancing.
-              Model performance is evaluated offline to select the best checkpoint.
-            </p>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-dot"></div>
-          <div class="step-body">
-            <h3>4) On-Robot Deployment</h3>
-            <p>
-              The trained model is integrated into a ROS node for real-time inference.
-              Predictions are post-processed into motion decisions
-              such as forward movement, stopping, or turning.
+              I built an offline benchmark that extracts front-camera image sequences from 13 curated Go1 rosbags and evaluates pretrained VLMs as high-level social decision policies. The main contribution is a prompt-policy layer that expands the action space to <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span> and uses sequence-based reasoning instead of pure single-frame classification.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-
-    <!-- RESULTS -->
-    <section id="results" class="section">
+    <section class="section">
       <div class="section-head">
-        <h2>Results</h2>
+        <h2>From Geometry to Semantics</h2>
         <p>
-          Initial results demonstrate the feasibility of deploying
-          a vision-based perception model on a real quadruped robot.
+          The project evolves by keeping the low-level safety signals, then adding a semantic layer for human-aware decision making.
         </p>
       </div>
 
       <div class="grid-2">
         <article class="card">
-          <h3>Metrics</h3>
-          <div class="metric-row">
-            <span>Accuracy</span>
-            <span class="mono" id="accText">0.93</span>
-          </div>
-          <div class="metric-row">
-            <span>Inference Latency</span>
-            <span class="mono" id="latText">33 ms</span>
-          </div>
-          <div class="metric-row">
-            <span>Throughput</span>
-            <span class="mono" id="fpsText">30 FPS</span>
-          </div>
-          <p class="note">
-            Metrics shown here are placeholders and will be replaced
-            with measured on-robot results.
-          </p>
+          <h3>Phase 1 Signals</h3>
+          <p><strong>What these signals do:</strong> traversability, obstacle risk, and stability help the robot move safely and react quickly.</p>
+          <ul class="bullets compact">
+            <li>Useful for reactive navigation and low-level motion safety</li>
+            <li>Good at answering whether the robot can move through local space</li>
+          </ul>
         </article>
 
         <article class="card">
-          <h3>Observations & Next Steps</h3>
-          <ul class="bullets">
-            <li>
-              Offline validation accuracy does not fully capture real-world behavior;
-              inference latency and stability are critical on hardware.
-            </li>
-            <li>
-              Performance is affected by lighting changes, surface texture,
-              and motion-induced blur.
-            </li>
-            <li>
-              Future work includes temporal smoothing, sequence-based models,
-              and experimenting with diffusion policies or VLA-style architectures.
-            </li>
+          <h3>Why Semantics Was Added</h3>
+          <p><strong>Why it matters:</strong> low-level risk signals do not explain social intent around humans.</p>
+          <ul class="bullets compact">
+            <li>They do not capture crossing direction, yielding behavior, or ambiguity</li>
+            <li>The VLM layer adds semantic interpretation on top of those signals</li>
           </ul>
         </article>
       </div>
     </section>
 
+    <section id="results" class="section">
+      <div class="section-head">
+        <h2>Phase 2: Social Decision Benchmark</h2>
+        <p>
+          Phase 1 answered whether learned perception could run on the robot. Phase 2 asked whether pretrained VLMs could support structured social decisions for human-aware navigation in an offline benchmark.
+        </p>
+      </div>
 
-    <!-- MEDIA -->
+      <div class="result-highlight">
+        <div class="result-block">
+          <div class="result-label">Key Results</div>
+          <ul class="bullets compact strong-list">
+            <li><strong>13 curated social navigation scenarios</strong></li>
+            <li><strong>0.60 bag-level decision accuracy</strong> on primary scenarios</li>
+            <li><strong>10-frame sequence window</strong> with <strong>5-frame VLM input</strong></li>
+          </ul>
+        </div>
+        <div class="result-block">
+          <div class="result-label">Interpretation</div>
+          <ul class="bullets compact">
+            <li>VLM prompting enables structured social decisions beyond binary stop/go</li>
+            <li>Performance is still limited by perception reliability in crossings and late-entry scenes</li>
+            <li>VLM latency and uncertainty prevent direct low-level real-time control</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>Phase 2 Benchmark Highlights</h3>
+          <div class="metric-row">
+            <span>Curated Social-Nav Bags</span>
+            <span class="mono">13</span>
+          </div>
+          <div class="metric-row">
+            <span>Primary Bag-Level Consensus Accuracy</span>
+            <span class="mono">0.60</span>
+          </div>
+          <div class="metric-row">
+            <span>Best Primary-Case Accuracy</span>
+            <span class="mono">0.60</span>
+          </div>
+          <div class="metric-row">
+            <span>Sequence Window / Max Frames</span>
+            <span class="mono">10 / 5</span>
+          </div>
+          <p class="note">
+            In the saved <span class="mono">final_policy_v2_crossing</span> benchmark, both sequence methods reached 0.60 primary-case accuracy across the 10 non-review bags. The VLM phase should be read as an offline social-navigation benchmark rather than a fully deployed closed-loop controller.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>What the Numbers Mean</h3>
+          <ul class="bullets compact">
+            <li><strong>Where VLM helped:</strong> receding-person cases benefited from temporal reasoning.</li>
+            <li><strong>Where it struggled:</strong> crossing and entering-late cases still often collapsed to unsafe <span class="mono">FORWARD</span>.</li>
+            <li><strong>Why <span class="mono">REVIEW</span> matters:</strong> it gives the policy an explicit uncertainty channel instead of forcing brittle answers.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="deployment" class="section">
+      <div class="section-head">
+        <h2>Deployment Clarity</h2>
+        <p>
+          The site should make one thing instantly clear: the two phases reached different levels of real-time integration.
+        </p>
+      </div>
+
+      <div class="status-grid">
+        <article class="status-card status-live">
+          <div class="status-title">WHAT WAS ACTUALLY DEPLOYED</div>
+          <h3>✔ Real-Time</h3>
+          <ul class="bullets compact">
+            <li>Imitation-learning controller on Go1</li>
+            <li>On-robot inference with deployment-side smoothing and safety logic</li>
+          </ul>
+        </article>
+
+        <article class="status-card status-test">
+          <div class="status-title">BENCHMARKED</div>
+          <h3>🧪 Offline</h3>
+          <ul class="bullets compact">
+            <li>VLM social-navigation benchmark over curated rosbag scenarios</li>
+            <li>Sequence-based semantic decision evaluation</li>
+          </ul>
+        </article>
+
+        <article class="status-card status-warn">
+          <div class="status-title">NOT DEPLOYED</div>
+          <h3>⚠️ Raw VLM Motion Control</h3>
+          <ul class="bullets compact">
+            <li>Raw VLM output should not directly control Go1</li>
+            <li>Real-time use should stay safety-projected and advisory</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="callout-card">
+        <h3>Final System Interpretation</h3>
+        <p>
+          <strong>The VLM layer is best understood as a high-level social decision module, while the robot controller remains responsible for real-time safety and motion execution.</strong>
+        </p>
+      </div>
+    </section>
+
     <section id="media" class="section">
       <div class="section-head">
         <h2>Media</h2>
         <p>
-          Demonstration videos of Go1 walking and navigating using the
-          deployed perception model.
+          Demonstration media from the earlier on-robot navigation phase. The VLM capstone is primarily represented by offline benchmark results, prompt-policy analysis, and controller-side safety-projection design.
         </p>
       </div>
 
@@ -317,8 +416,36 @@
         </div>
 
         <div class="media-body" id="mediaBody">
-          <!-- JS will render video/iframe here -->
         </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Why This Project Matters</h2>
+        <p>
+          The strongest signal in this portfolio is not only model performance, but system-level thinking across robotics, learning, evaluation, and safety.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>Why it stands out</h3>
+          <ul class="bullets compact">
+            <li>Bridges low-level control and high-level semantic reasoning</li>
+            <li>Shows end-to-end systems thinking, not just model training</li>
+            <li>Highlights safety-aware AI design under real-world constraints</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>What it signals about the researcher</h3>
+          <ul class="bullets compact">
+            <li>Can ship real robot pipelines, not only offline notebooks</li>
+            <li>Can refine problem formulation when the first model family becomes limiting</li>
+            <li>Understands latency, uncertainty, and interface design in embodied AI</li>
+          </ul>
+        </article>
       </div>
     </section>
 

@@ -1,122 +1,125 @@
-# Model (ResNet-18, PyTorch)
+# Models
 
-This section describes the learning formulation, model design, and training procedure used to map camera images to robot motion commands.
+## Page Summary
 
----
+This project uses two different model paradigms for two different jobs:
 
-## Problem Definition
-
-The task is formulated as a **supervised regression problem** for imitation learning.
-
-### Input
-
-* Single RGB image from the Go1 front-facing camera
-* Image is preprocessed using:
-
-  * Resize → Center crop
-  * ImageNet normalization
-
-### Output Label
-
-* Continuous motion command vector:
-
-  ```
-  y = [vx, vy, wz]
-  ```
-
-  where:
-
-  * `vx`: forward linear velocity
-  * `vy`: lateral velocity (optionally forced to zero at deployment)
-  * `wz`: angular velocity (yaw rate)
-
-During deployment, additional safety logic (clipping, smoothing) is applied on top of the raw model output.
+- **Phase 1:** compact deployable visual models for real-time robot motion
+- **Phase 2:** pretrained VLMs for higher-level social decision making
 
 ---
 
-### Loss
+## Part A: Imitation-Learning Model
 
-* **Smooth L1 loss (Huber loss)** between predicted and ground-truth commands
+### What this does
 
-This loss provides a balance between:
+The earlier Go1 navigation pipeline uses a lightweight visual imitation-learning model centered on a `ResNet-18` backbone.
+The purpose is to map onboard camera input to navigation-relevant robot behavior under real-time deployment constraints.
 
-* L2 loss sensitivity for small errors
-* Robustness to outliers compared to pure MSE
+### Core ingredients
 
----
+- `ResNet-18` visual backbone
+- short temporal history / GRU-style context where useful
+- deployment-side safety logic such as smoothing, clipping, and stop-gate style filtering
 
-## Training
+### Inputs and outputs
 
-### Train / Validation Split
+**Input:**
 
-* Initial **train/test split** to hold out unseen data
-* **K-fold cross validation** (typically 5-fold) performed on the training split
-* Final model trained on the full training set after cross-validation
+- front-camera imagery from Go1
 
-This setup improves robustness and provides a more reliable estimate of generalization.
+**Output:**
 
----
+- forward motion tendency
+- stop or slow-down behavior
+- turning-related control signals
+- velocity-style estimates such as `[vx, vy, wz]` in the regression framing
 
-### Augmentations
+### Why this model family was suitable
 
-* **Random horizontal flip**
+- simple and well understood
+- efficient enough for real-time use on Go1
+- straightforward to integrate into a ROS node
+- strong enough to learn corridor-following and navigation cues without making deployment overly fragile
 
-  * Applied only during training
-  * Corresponding labels are adjusted:
+### Why it matters
 
-    * `vy → -vy`
-    * `wz → -wz`
-* **Color jitter**
-
-  * Mild brightness / contrast variation to improve robustness to lighting changes
-
-Augmentations were chosen to reflect **physically valid transformations** for the robot.
-
----
-
-### Hyperparameters
-
-* Backbone: **ResNet-18**
-* Optimizer: **AdamW**
-* Learning rate: `1e-3`
-* Batch size: `64`
-* Epochs: `~10–20` (with early stopping)
-* Dropout: `0.2` in the regression head
-* Optional:
-
-  * **Stochastic Weight Averaging (SWA)**
-  * **Test-Time Augmentation (TTA)** via horizontal flip
+The practical goal of Phase 1 was not model novelty by itself.
+It was to produce a robot system that could actually run online.
 
 ---
 
-## Results
+## Part B: VLM Social-Navigation Model
 
-### Performance
+### What this does
 
-* Achieved low **mean absolute error (MAE)** on held-out test data
-* Cross-validation showed consistent performance across folds
-* Qualitative examples indicate:
+The later capstone shifts from low-level control to high-level social decision making using pretrained vision-language models:
 
-  * Correct turning direction
-  * Reasonable velocity magnitudes
-  * Stable predictions across similar frames
+- `Qwen3-VL-30B`
+- `InternVL-3.5-14B`
 
-(Quantitative metrics and examples are shown in `assets/results.png`.)
+### Important clarification
+
+- The VLMs were **not trained from scratch** in this project.
+- They were **not fine-tuned** for this capstone.
+- They are used as **pretrained semantic reasoning modules**.
+
+### Single-image vs. sequence reasoning
+
+The benchmark compares:
+
+- single-image prompting
+- sequence-based prompting over short front-camera windows
+
+### Why sequence matters
+
+Social navigation often depends on temporal cues rather than one still frame.
+Sequence input helps expose:
+
+- crossing direction
+- receding motion
+- late entry into the frame
+- uncertainty when intent is unclear
+
+### Prompt-policy layer
+
+The main modeling contribution is a prompt-policy layer, not gradient-based retraining.
+That layer asks the VLM to reason about:
+
+- person presence
+- motion type
+- crossing direction
+- whether the latest frame is blocked
+- safer lateral side
+- uncertainty or ambiguity
+
+### Structured action output
+
+The VLM layer maps its reasoning into the action space:
+
+- `STOP`
+- `FORWARD`
+- `LEFT`
+- `RIGHT`
+- `REVIEW`
+
+### Why this differs from Phase 1
+
+- **Phase 1 model:** optimized for direct robot-oriented motion behavior under real-time constraints
+- **Phase 2 model:** optimized for slower semantic interpretation and social decision support
+
+The later phase is therefore not a replacement for the real-time controller.
+It is better understood as a semantic module that could sit above a fast controller.
 
 ---
 
-### Failure Cases
+## Final Interpretation
 
-* Ambiguous visual scenes (e.g., wide open spaces without clear directional cues)
-* Sudden lighting changes or strong reflections
-* Rare maneuvers underrepresented in the dataset (e.g., sharp turns at high speed)
+### The model progression
 
-These cases highlight the importance of **data diversity and coverage**, rather than model complexity alone.
+1. a compact deployable visual policy for learning to move
+2. a larger pretrained semantic policy for deciding when and how to yield around people
 
----
+### Why this matters
 
-## Summary
-
-A relatively simple vision backbone (ResNet-18), when paired with a clean data pipeline and careful deployment, proved sufficient to produce stable and deployable robot behavior.
-
-This reinforces the value of strong baselines and system-level design in real-world robotics.
+This progression reflects a shift from low-level imitation to higher-level social reasoning rather than simply scaling up a single model family.

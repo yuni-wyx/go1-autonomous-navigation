@@ -1,193 +1,152 @@
-# Experiments
+# Experiments and Results
 
-This document summarizes the key experimental choices, ablations, and
-engineering observations made while developing and deploying a vision-based
-imitation learning policy on the Unitree Go1.
+## Page Summary
 
-The focus of these experiments is not exhaustive hyperparameter search, but
-understanding which design decisions most strongly affect performance and
-stability on a real robot.
+The later VLM capstone is evaluated primarily as an **offline social-navigation benchmark** over curated Go1 rosbag scenarios.
+This page highlights the most important results without dumping the full JSON.
 
 ---
 
-## Baseline Configuration
+## Phase 1 Context
 
-- **Task:** Vision-based imitation learning  
-- **Input:** Single RGB camera frame  
-- **Output:** Continuous velocity command `[vx, vy, wz]`  
-- **Backbone:** ResNet-18  
-- **Loss:** Smooth L1 (Huber)  
-- **Training:** Supervised regression with teleoperation data  
+### What Phase 1 validated
 
-This baseline was chosen to be simple, interpretable, and efficient enough for
-CPU-only deployment on the robot.
+The earlier imitation-learning phase answered a deployment question:
 
----
+- can a lightweight visual policy be trained from Go1 data?
+- can it run in real time on the robot?
+- can the full perception-to-action loop stay stable online?
 
-## Data Pipeline Experiments
+### What Phase 2 validates instead
 
-### Teleoperation Data Characteristics
+The capstone asks a different question:
 
-Raw teleoperation data exhibits:
-- Strong bias toward straight-line motion
-- Sparse coverage of turning behaviors
-- High correlation between consecutive frames
-
-**Observation:**  
-Models trained on unfiltered data tend to under-predict yaw (`wz`) and show
-directional bias in corridors.
+- can pretrained VLMs produce useful **high-level social decisions** from Go1 image sequences?
 
 ---
 
-### Timestamp Alignment Strategy
+## Benchmark Setup
 
-**Method:**  
-- Nearest-neighbor matching between image timestamps and `Twist` commands
+### Models compared
 
-**Observation:**  
-- Even small temporal misalignments noticeably degraded training stability
-- Nearest-neighbor alignment was sufficient given the teleop command rate
+- `InternVL-3.5-14B`
+- `Qwen3-VL-30B`
+- single-image prompting
+- sequence-based prompting
 
----
+### Data setting
 
-## Data Augmentation Experiments
+- 13 curated Go1 rosbag scenarios
+- sequence length `10`
+- max `5` images per VLM call
 
-### Horizontal Flip Augmentation
+### Important note
 
-**Setup:**  
-- Random horizontal flip applied during training only  
-- Corresponding label correction:
-  - `vy → -vy`
-  - `wz → -wz`
-
-**Observation:**  
-- Reduced left/right bias in narrow corridors
-- Improved generalization to unseen turning directions
-- No negative impact on straight-line behavior
-
-This augmentation proved to be one of the highest-impact changes.
+The geometry baseline stayed in the code for compatibility, but it was not available on this bag set because the extracted benchmark did not include the LiDAR topic needed by that baseline.
 
 ---
 
-### Color Jitter
+## Key Results
 
-**Setup:**  
-- Mild brightness and contrast jitter
+### 1. Best primary-case accuracy reached 0.60
 
-**Observation:**  
-- Improved robustness to lighting variation
-- Limited impact compared to geometric augmentation
+Across the 10 non-review primary bags:
 
----
+- `internvl_sequence_image_navigation`: `0.60`
+- `qwen_sequence_image_navigation`: `0.60`
+- `internvl_single_image_navigation`: `0.50`
+- `qwen_single_image_navigation`: `0.30`
 
-## Training Strategy Experiments
+### Why it matters
 
-### Train / Validation Splits
-
-**Setup:**  
-- Initial train/test split
-- 5-fold cross validation on training data
-
-**Observation:**  
-- Single random splits produced unstable validation metrics
-- K-fold CV provided more reliable performance estimates
-- Fold variance highlighted sensitivity to dataset composition
+The strongest results in the saved run came from the **sequence-based** policies rather than the single-image variants.
 
 ---
 
-### Stochastic Weight Averaging (SWA)
+### 2. Bag-level consensus on primary scenarios was 0.60
 
-**Setup:**  
-- Enabled during the later phase of training
-- Averaged model weights evaluated against standard checkpoint
+Using majority consensus across the VLM methods:
 
-**Observation:**  
-- Slight improvement in validation MAE
-- Reduced sensitivity to the final epoch choice
-- Benefits were modest but consistent
+- primary bag-level consensus accuracy: `0.60` (`6 / 10` primary bags)
 
----
+### Why it matters
 
-## Ensemble Inference
-
-**Setup:**  
-- Deployed multiple fold checkpoints simultaneously
-- Predictions aggregated via simple mean
-
-**Observation:**  
-- Reduced prediction variance
-- Smoother velocity commands during runtime
-- Particularly beneficial for yaw (`wz`) stability
-
-The ensemble improved control behavior more than offline metrics alone would
-suggest.
+This is a good recruiter-friendly summary because it reflects scenario-level correctness rather than only per-method snapshots.
 
 ---
 
-## Deployment-Oriented Experiments
+### 3. Unsafe-forward rate remained a core failure mode
 
-### Runtime Smoothing (EMA)
+Mean unsafe-forward rate on STOP-labeled primary cases:
 
-**Setup:**  
-- Exponential moving average applied to predicted `vx` and `wz`
+- `internvl_sequence_image_navigation`: `0.610`
+- `internvl_single_image_navigation`: `0.500`
+- `qwen_sequence_image_navigation`: `0.432`
+- `qwen_single_image_navigation`: `0.335`
 
-**Observation:**  
-- Significantly reduced jitter in angular velocity
-- Improved perceived smoothness of robot motion
-- Minor increase in response latency, acceptable for walking speeds
+### Why it matters
 
----
-
-### Velocity Clipping
-
-**Setup:**  
-- Conservative bounds enforced on `vx` and `wz`
-
-**Observation:**  
-- Improved safety during early deployment
-- Prevented outlier predictions from causing abrupt motion
+Lower unsafe-forward alone does not automatically mean a better policy.
+For example, `qwen_single_image_navigation` had the lowest unsafe-forward rate here, but it also had only `0.30` primary-case accuracy and a high mean `REVIEW` rate (`0.403`).
 
 ---
 
-### Test-Time Augmentation (TTA)
+### 4. Review handling was useful but incomplete
 
-**Setup:**  
-- Horizontal flip TTA with sign correction at inference
+The benchmark contained `3` review-oriented bags.
+At the bag-consensus level:
 
-**Observation:**  
-- Minimal improvement in offline metrics
-- Slight increase in runtime cost
-- Disabled by default in deployment
+- review bags without a review consensus: `1 / 3`
 
----
+### Why it matters
 
-## Negative Results and Limitations
-
-- Increasing model capacity beyond ResNet-18 did not yield clear gains
-- Removing EMA led to visibly unstable yaw commands
-- Training without flip augmentation resulted in strong directional bias
-- Dataset imbalance had a larger impact than optimizer or learning-rate tuning
+`REVIEW` is what lets the policy express uncertainty instead of forcing a brittle stop-or-go answer.
 
 ---
 
-## Summary of Findings
+### 5. Sequence helped in receding-person recovery
 
-Across all experiments, the most impactful improvements came from:
-1. Data coverage and balance
-2. Physically valid augmentations
-3. Runtime safety and smoothing
+In the receding-person case (`bag_10`):
 
-Model complexity played a secondary role compared to system-level design and
-deployment considerations.
+- both sequence methods predicted `FORWARD` correctly
+- `internvl_single_image_navigation` collapsed to `STOP`
+- `qwen_single_image_navigation` collapsed to `REVIEW`
+
+### Why it matters
+
+This is one of the clearest examples where temporal reasoning helped the semantic policy behave more like the intended social rule.
 
 ---
 
-## Implications for Future Work
+## Interpretation
 
-These findings motivate future exploration of:
-- Richer data collection strategies
-- Temporal models incorporating short histories
-- More expressive policies (e.g., diffusion-based or VLA-style approaches)
+### Where the VLM helped
 
-However, even simple vision models can produce stable real-world behavior when
-paired with a robust data pipeline and conservative deployment strategy.
+- distinguishing receding from approaching motion
+- representing lateral intent through `LEFT` / `RIGHT`
+- using `REVIEW` as an uncertainty fallback
+
+### Where perception still failed
+
+Several crossing and entering-late scenarios still failed at the consensus level:
+
+- `bag_05` (`right_to_left_crossing`) -> consensus `FORWARD`, expected `STOP`
+- `bag_07` (`left_to_right_crossing`) -> consensus `FORWARD`, expected `STOP`
+- `bag_08` (`person_enters_frame`) -> consensus `FORWARD`, expected `STOP`
+- `bag_09` (`approaching_person`) -> consensus `FORWARD`, expected `STOP`
+
+### Why sequence did not always outperform single image
+
+Sequence prompting adds temporal evidence, but it also spreads attention across multiple frames.
+When the person is small, late-entering, or only intermittently salient, the extra context does not always improve activation.
+
+### Why `REVIEW` is useful
+
+Even when used imperfectly, `REVIEW` is a more honest interface for social-navigation ambiguity than forcing every scene into `STOP` or `FORWARD`.
+
+---
+
+## Main Takeaway
+
+The capstone does not show fully deployed autonomous social navigation on Go1.
+What it does show is that pretrained VLMs can act as **high-level decision policies** in an offline social-navigation benchmark, and that prompt-level design can induce structured actions such as `LEFT`, `RIGHT`, and `REVIEW` that are missing from simpler stop-or-go formulations.

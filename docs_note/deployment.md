@@ -1,93 +1,91 @@
-# Deployment on Go1
+# Deployment and Real-Time Use
 
-This section describes how the trained vision policy was packaged, deployed, and executed on the Unitree Go1 for real-time inference.
+## Page Summary
 
----
-
-## Packaging
-
-### Model Export
-
-* Trained models were saved as **PyTorch checkpoints (`.pt`)**
-* Multiple K-fold models were retained and deployed as an **ensemble**
-* Deployment artifacts include:
-
-  * `model_fold*.pt` — trained ResNet-18 weights
-  * `preprocess.json` — image preprocessing configuration (resize, crop, normalization)
-
-This setup ensures that **training and deployment use identical preprocessing and output scaling**.
+This page separates what was truly deployed in the earlier Go1 project from what the later VLM capstone proposes as a conservative real-time path.
+That distinction is important for accuracy.
 
 ---
 
-### Dependencies
+## What Was Actually Deployed
 
-The on-robot runtime environment includes:
+### ✔ Real-time on Go1
 
-* **ROS Melodic**
-* **Python 3**
-* **PyTorch (CPU-only)**
-* **OpenCV** (image handling and visualization)
-* **torchvision** (model and preprocessing)
-* **cv_bridge** (ROS ↔ OpenCV image conversion)
-* **NumPy**
+The earlier navigation project reached real robot deployment.
+A compact visual policy from the imitation-learning pipeline was integrated into a ROS runtime on the Go1 and used for real-time inference.
 
-The model runs entirely on CPU, simplifying deployment and avoiding GPU-specific dependencies.
+### What this real-time stack included
 
----
+- low-latency model execution
+- direct perception-to-motion mapping
+- clipping and smoothing for stable commands
+- practical safety handling such as stop overrides and conservative post-processing
 
-## Runtime
+### Why it matters
 
-### Inference Frequency
-
-* Inference runs at **~10 Hz** (configurable via ROS parameters)
-* The loop frequency balances:
-
-  * Model inference cost
-  * Control stability
-  * Camera frame availability
+Phase 1 was a true robot deployment project.
+Its purpose was to show that a learned visual navigation model could be packaged and executed online on Go1 hardware.
 
 ---
 
-### Latency Notes
+## What the VLM Capstone Proposes
 
-* End-to-end inference latency (image → model → command) is low enough to support smooth teleoperation-style control
-* To improve runtime stability:
+### 🧪 Offline first
 
-  * Model outputs are **clipped to safe velocity limits**
-  * **Exponential Moving Average (EMA)** smoothing is applied to reduce command jitter
-* The system prioritizes **predictable, stable motion** over aggressive responsiveness
+The later capstone solves a different problem.
+It studies whether pretrained VLMs can provide better **high-level social decisions** about how the robot should behave around people.
 
----
+### What the VLM layer provides
 
-### Integration with ROS Nodes
+- a semantic reasoning module
+- a slower decision policy over image sequences
+- high-level actions such as `STOP`, `FORWARD`, `LEFT`, `RIGHT`, and `REVIEW`
 
-The deployed policy runs as a standalone ROS node:
+### Important clarification
 
-* Subscribes to:
-
-  * Camera topic (`sensor_msgs/Image`)
-  * Emergency stop topic (`std_msgs/Bool`)
-* Publishes:
-
-  * Velocity commands as `geometry_msgs/Twist`
-
-At runtime:
-
-1. Camera frames are received from the Go1 sensor pipeline
-2. Images are preprocessed and passed through the neural network
-3. Predicted motion commands `[vx, vy, wz]` are post-processed (clipping + smoothing)
-4. Commands are published back to the robot control interface
-
-An emergency stop signal immediately overrides all predicted commands.
+It should **not** be described as a fully deployed closed-loop robot controller.
+The main evidence for this phase comes from offline benchmarking on curated Go1 rosbags.
 
 ---
 
-## Summary
+## Safety Projection Layer
 
-Deploying the trained model on the Go1 validated the full end-to-end system:
+### ⚠️ Not deployed
 
-* The same model trained offline was executed on real robot hardware
-* Inference ran in real time with safety constraints
-* The perception-to-action pipeline functioned reliably in physical environments
+Raw VLM output should not directly control Go1.
 
-This step transformed the project from an offline ML experiment into a **working embodied AI system**.
+### Why not
+
+- VLM latency is too high for fast closed-loop control
+- social predictions do not guarantee free space or collision clearance
+- lateral suggestions such as `LEFT` or `RIGHT` do not by themselves verify kinematic feasibility
+- semantic reasoning and motor execution operate at different timescales
+
+### Recommended system split
+
+- the robot controller remains responsible for real-time safety and motion execution
+- geometry, local control, and fast collision avoidance remain in the low-level loop
+- the VLM provides slower semantic guidance about how to interpret the scene socially
+
+> The VLM layer is best understood as a high-level social decision module, while the robot controller remains responsible for real-time safety and motion execution.
+
+### What safety projection means in practice
+
+- `LEFT` and `RIGHT` can be preserved as advisory hints
+- a planner or controller can log or prefer those hints
+- the final executable action should still pass through a conservative safety layer
+
+This lets the VLM contribute to social interpretation without being granted direct motor authority.
+
+---
+
+## Final Deployment Interpretation
+
+### In one line
+
+1. **Earlier project:** real-time imitation-learning navigation deployed on Go1
+2. **Later capstone:** offline VLM social-navigation benchmark plus a conservative advisory path for future integration
+
+### Why this wording matters
+
+This is the most accurate way to connect the two projects without overclaiming what the VLM phase achieved.

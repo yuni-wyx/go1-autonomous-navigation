@@ -1,144 +1,144 @@
-## Unitree Go1: Learning Robotics Through Vision + Deep Learning
+# Go1 Research Report Overview
 
-**ROS Melodic · PyTorch · ResNet-18 · Real-World Deployment**
+## One-Sentence Summary
 
-I built this project to deepen my understanding of robotics by applying deep learning in a real, embodied system. Rather than working purely in simulation, I focused on designing and implementing an end-to-end pipeline—from teleoperation and data collection to model training and on-robot deployment—using a Unitree Go1 quadruped.
-
-The core goal of this project was not just to train a vision model, but to understand how data, models, and systems interact when machine learning is deployed on physical hardware.
+This report documents both an earlier real-time imitation-learning navigation pipeline and a later VLM-based social-navigation capstone. The VLM policy is evaluated primarily offline and should not be described as a fully deployed closed-loop robot controller.
 
 ---
 
-## 1. Motivation
+## The Big Picture
 
-I started this Go1 project with two primary goals:
+### What this report covers
 
-1. **Learn robotics through a full end-to-end system**, rather than isolated scripts or simulation-only experiments
-2. **Apply machine learning to a physical robot** and understand real-world constraints such as data quality, latency, and deployment complexity
+- **Phase 1:** real-time imitation-learning navigation on Go1
+- **Phase 2:** VLM-based social-navigation benchmark on curated Go1 rosbags
+- **Final system view:** a fast controller paired with a slower semantic reasoning layer
 
-This project is intentionally *systems-first*. I wanted hands-on experience with the complete pipeline—from raw sensor data to a trained model running on a real robot.
+### Why this progression matters
 
----
-
-## 2. System Overview
-
-### Hardware
-
-* Unitree Go1 quadruped robot (onboard camera)
-
-### Software
-
-* ROS Melodic
-* Python + PyTorch (training and inference)
-* OpenCV (image processing, dataset extraction, debugging)
-* Joystick / teleoperation for data collection
-
-### High-Level Pipeline
-
-1. Teleoperate the robot and record ROS bags
-2. Extract camera frames and action labels from rosbag files
-3. Train a vision-based model using ResNet-18
-4. Deploy the trained model back onto the Go1 and run inference on-robot
-
-![Pipeline](../assets/pipeline.png)
+- The first phase asks whether a learned visual controller can run on the robot.
+- The second phase asks whether the robot can make more interpretable decisions around people.
+- Together, they show a move from low-level motion execution to higher-level social reasoning.
 
 ---
 
-## 3. Data Collection (Teleoperation + rosbag)
+## Phase 1: Real-Time Imitation-Learning Navigation
 
-I collected real-world training data by manually controlling the Go1 via joystick teleoperation while recording relevant ROS topics using rosbag.
+### What this does
 
-### Why teleoperation + rosbag?
+- Collects teleoperation data from Go1 rosbags
+- Trains visual navigation policies such as ResNet-18-based models
+- Integrates the learned policy into a real-time ROS pipeline on the robot
 
-* Fast and practical way to gather realistic robot data
-* Captures real environment conditions, sensor noise, and motion blur
-* Enables iterative improvement: record → inspect → recollect
+### What the policy is trying to control
 
-### Data Recorded
+- move forward when the path is clear
+- slow or stop when necessary
+- turn smoothly and stably
+- keep inference lightweight enough for on-robot execution
 
-* Camera image stream (primary learning signal)
-* Motion commands (used as supervision targets for learning)
+### Why it matters
 
----
+This phase establishes the practical robotics foundation of the project:
 
-## 4. Dataset Construction (rosbag → images)
-
-After recording, I processed rosbag files offline to construct a training-ready dataset.
-
-### Key Steps
-
-* Parse ROS image topics from rosbag files
-* Convert ROS image messages into standard image arrays
-* Save frames to disk and align them with corresponding control commands
-* Validate data quality (resolution, blur, lighting consistency)
-
-### Why OpenCV?
-
-* Reliable conversion from ROS image formats
-* Fast visualization for spotting corrupted or misaligned frames
-* Standard preprocessing utilities compatible with ML pipelines
-
-This step transformed raw ROS logs into a clean supervised learning dataset.
+- data collection
+- preprocessing and alignment
+- training and packaging
+- real-time deployment on Go1
 
 ---
 
-## 5. Model Training (ResNet-18, PyTorch)
+## Why the Problem Changed
 
-I trained a vision model using **ResNet-18** as the backbone to map camera images to motion commands.
+### Limitation of the earlier framing
 
-### Why ResNet-18?
+Imitation learning can reproduce observed navigation behavior, but it does not always explain **why** the robot should stop, go forward, yield left, yield right, or defer.
 
-* Strong and well-understood baseline for vision tasks
-* Computationally efficient, making it suitable for real-time or near-real-time inference
-* Easy to debug and iterate during experimentation
+### Social scenes need more structure
 
-### Training Results
-
-* Achieved strong validation performance
-* The model generalized well enough to be tested directly on the robot
-
-![Results Summary](../assets/results.png)
+A centered person, a receding person, a late-entering person, and a crossing person are not equivalent cases.
+The navigation interface therefore needs richer outputs than simple low-level motion imitation.
 
 ---
 
-## 6. On-Robot Deployment & Inference
+## Phase 2: VLM Social-Navigation Capstone
 
-A major milestone of this project was deploying the trained model back onto the Go1 and running inference successfully on the robot.
+### What this does
 
-### What Worked
+- evaluates pretrained vision-language models on Go1 image sequences
+- treats social navigation as a **high-level decision problem**
+- expands the action space to:
+  - `STOP`
+  - `FORWARD`
+  - `LEFT`
+  - `RIGHT`
+  - `REVIEW`
 
-* The model ran reliably on the robot and produced stable predictions
-* The full pipeline—sensor input → model inference → output—worked end to end
+### Key design choice
 
-### Why This Matters
+The capstone does **not** fine-tune a new robot policy end to end.
+Instead, it uses pretrained VLMs as semantic reasoning modules and adds a prompt-policy layer for:
 
-Training a model is only half the problem. Deployment on a real robot introduces additional challenges, including:
+- crossing-direction logic
+- receding-person recovery
+- explicit uncertainty via `REVIEW`
 
-* Limited compute resources
-* Dependency and environment management
-* Real-time behavior requirements
-* Robustness to changing lighting and environments
+### What was evaluated
 
-Successfully running inference on the Go1 validated the practicality of the entire system.
-
----
-
-## 7. Lessons Learned
-
-* Robotics projects require **systems thinking**: data pipelines and deployment matter as much as model architecture
-* Real-world data quality (lighting, motion blur, camera angle) strongly impacts performance
-* Simple, well-chosen baselines like ResNet-18 can be highly effective when the overall pipeline is solid
-
----
-
-## 8. Future Work
-
-* Improve generalization across environments (indoors vs. outdoors, lighting changes)
-* Incorporate richer supervision or self-supervised learning methods
-* Explore more advanced policies (e.g., diffusion policies or VLA-style approaches)
-* Extend from perception-only models to tighter perception-control loops
+- 13 curated Go1 rosbag scenarios
+- single-image and sequence-based prompting
+- offline metrics such as action accuracy, unsafe-forward rate, and bag-level consensus
 
 ---
 
-## Links
+## Architectural Progression
 
-* **Code & assets:** [https://yuni-wyx.github.io/go1-autonomous-navigation](https://yuni-wyx.github.io/go1-autonomous-navigation)
+### Phase 1
+
+`image input -> learned visual policy -> direct real-time robot control`
+
+### Phase 2
+
+`image sequence -> pretrained VLM reasoning -> structured social decision -> safety-projected controller path`
+
+### What changed architecturally
+
+The later phase separates:
+
+- a **fast controller** for real-time execution and safety
+- a **slower semantic layer** for interpreting people and ambiguity
+
+This is important because raw VLM outputs are not suitable as low-latency motor commands.
+
+---
+
+## Offline vs. Real-Time
+
+### Evaluated offline
+
+- `Qwen3-VL-30B` and `InternVL-3.5-14B`
+- single-image and sequence-based social-navigation policies
+- 13 curated Go1 rosbag scenarios
+- decision-level metrics and scenario analysis
+
+### Deployed or safety-projected in real time
+
+- the earlier imitation-learning stack was deployed on Go1 for real-time inference
+- the later VLM work defines a conservative path in which VLM outputs are treated as advisory signals and projected through safety logic before any executable robot action is considered
+
+---
+
+## Main Takeaway
+
+### In one line
+
+This project evolves from **learning how to move** to **reasoning about when and how to yield around people**.
+
+### Why that matters
+
+It shows not only model-building ability, but also systems thinking about:
+
+- deployment constraints
+- interface design
+- interpretability
+- safety in embodied AI
