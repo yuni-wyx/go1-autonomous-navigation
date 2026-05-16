@@ -2,26 +2,24 @@
 
 ## Page Summary
 
-The later VLM capstone is evaluated primarily as an **offline social-navigation benchmark** over curated Go1 rosbag scenarios.
-This page highlights the most important results without dumping the full JSON.
+The later VLM capstone is evaluated mainly as an **offline social-navigation benchmark** over curated Go1 rosbag scenarios.
+The point of this page is not to present a polished leaderboard. It is to document what improved, what did not, and what the failure modes suggest.
 
 ---
 
 ## Phase 1 Context
 
-### What Phase 1 validated
-
-The earlier imitation-learning phase answered a deployment question:
+### What Phase 1 was trying to answer
 
 - can a lightweight visual policy be trained from Go1 data?
 - can it run in real time on the robot?
-- can the full perception-to-action loop stay stable online?
+- can the perception-to-action loop stay stable enough to be usable?
 
-### What Phase 2 validates instead
+### What Phase 2 asks instead
 
-The capstone asks a different question:
+The later question is narrower and more semantic:
 
-- can pretrained VLMs produce useful **high-level social decisions** from Go1 image sequences?
+- can pretrained VLMs produce better decision labels for human-facing scenes than a stop/go-only interface allows?
 
 ---
 
@@ -43,6 +41,7 @@ The capstone asks a different question:
 ### Important note
 
 The geometry baseline stayed in the code for compatibility, but it was not available on this bag set because the extracted benchmark did not include the LiDAR topic needed by that baseline.
+That is one reason the benchmark should be read as a decision-study setup, not a full navigation-stack comparison.
 
 ---
 
@@ -57,9 +56,10 @@ Across the 10 non-review primary bags:
 - `internvl_single_image_navigation`: `0.50`
 - `qwen_single_image_navigation`: `0.30`
 
-### Why it matters
+### Observation
 
-The strongest results in the saved run came from the **sequence-based** policies rather than the single-image variants.
+The sequence variants did better overall in this saved run, but not by a huge margin.
+The result is useful, though, because it suggests the action-space redesign was not completely washed out by using multiple frames.
 
 ---
 
@@ -69,9 +69,10 @@ Using majority consensus across the VLM methods:
 
 - primary bag-level consensus accuracy: `0.60` (`6 / 10` primary bags)
 
-### Why it matters
+### Observation
 
-This is a good recruiter-friendly summary because it reflects scenario-level correctness rather than only per-method snapshots.
+This is a decent compact summary, but it also hides disagreement.
+Several bags still have mixed predictions, which is important because instability across methods often points to perception ambiguity rather than one clean policy error.
 
 ---
 
@@ -84,10 +85,11 @@ Mean unsafe-forward rate on STOP-labeled primary cases:
 - `qwen_sequence_image_navigation`: `0.432`
 - `qwen_single_image_navigation`: `0.335`
 
-### Why it matters
+### Observation
 
-Lower unsafe-forward alone does not automatically mean a better policy.
-For example, `qwen_single_image_navigation` had the lowest unsafe-forward rate here, but it also had only `0.30` primary-case accuracy and a high mean `REVIEW` rate (`0.403`).
+This is one of the main reasons I would not overclaim the benchmark.
+Even when the decision interface is richer, several methods still push forward too often in scenes that should remain conservative.
+Also, the lowest unsafe-forward number does not automatically identify the best system, because it may come with overuse of `REVIEW` or poor overall action accuracy.
 
 ---
 
@@ -98,9 +100,10 @@ At the bag-consensus level:
 
 - review bags without a review consensus: `1 / 3`
 
-### Why it matters
+### Observation
 
-`REVIEW` is what lets the policy express uncertainty instead of forcing a brittle stop-or-go answer.
+`REVIEW` helps because it gives the evaluator somewhere honest to put ambiguity.
+But the results also show that adding a review channel is not the same as getting calibrated uncertainty for free.
 
 ---
 
@@ -112,19 +115,20 @@ In the receding-person case (`bag_10`):
 - `internvl_single_image_navigation` collapsed to `STOP`
 - `qwen_single_image_navigation` collapsed to `REVIEW`
 
-### Why it matters
+### Observation
 
-This is one of the clearest examples where temporal reasoning helped the semantic policy behave more like the intended social rule.
+This is one of the cleanest cases where temporal context actually mattered in the way I hoped it would.
+The person remains visible, so a static frame can keep the model overly conservative. The short sequence gives it a chance to see that the corridor is reopening.
 
 ---
 
-## Interpretation
+## Failure Cases and Interpretation
 
 ### Where the VLM helped
 
-- distinguishing receding from approaching motion
-- representing lateral intent through `LEFT` / `RIGHT`
-- using `REVIEW` as an uncertainty fallback
+- receding versus approaching motion became easier to separate
+- lateral intent could at least be represented through `LEFT` / `RIGHT`
+- ambiguous scenes no longer had to be forced into a false binary answer every time
 
 ### Where perception still failed
 
@@ -135,18 +139,26 @@ Several crossing and entering-late scenarios still failed at the consensus level
 - `bag_08` (`person_enters_frame`) -> consensus `FORWARD`, expected `STOP`
 - `bag_09` (`approaching_person`) -> consensus `FORWARD`, expected `STOP`
 
+### What those failures suggest
+
+The main bottleneck is not only prompt wording.
+It is whether the model activates strongly enough on the relevant person and motion pattern under the current sampling regime.
+In other words, the interface improved faster than the perception reliability did.
+
 ### Why sequence did not always outperform single image
 
-Sequence prompting adds temporal evidence, but it also spreads attention across multiple frames.
-When the person is small, late-entering, or only intermittently salient, the extra context does not always improve activation.
+Sequence prompting adds temporal evidence, but it also spreads the model's attention across multiple frames.
+When the person is small, late-entering, or only intermittently salient, the extra context can fail to help and can even dilute the cue that mattered.
 
-### Why `REVIEW` is useful
+### Why `REVIEW` is still worth keeping
 
-Even when used imperfectly, `REVIEW` is a more honest interface for social-navigation ambiguity than forcing every scene into `STOP` or `FORWARD`.
+Even when used imperfectly, `REVIEW` is still a better failure mode than pretending every scene has a confident `STOP` or `FORWARD` answer.
+It makes the uncertainty visible instead of hiding it.
 
 ---
 
 ## Main Takeaway
 
-The capstone does not show fully deployed autonomous social navigation on Go1.
-What it does show is that pretrained VLMs can act as **high-level decision policies** in an offline social-navigation benchmark, and that prompt-level design can induce structured actions such as `LEFT`, `RIGHT`, and `REVIEW` that are missing from simpler stop-or-go formulations.
+The capstone does not show deployed autonomous social navigation on Go1.
+What it does show is that changing the decision interface matters.
+A pretrained VLM can be pushed toward more structured outputs such as `LEFT`, `RIGHT`, and `REVIEW`, but the saved runs also make it clear that person detection and temporal activation are still the main weaknesses.

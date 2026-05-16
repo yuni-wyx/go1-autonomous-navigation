@@ -2,8 +2,8 @@
 
 ## Page Summary
 
-This page separates what was truly deployed in the earlier Go1 project from what the later VLM capstone proposes as a conservative real-time path.
-That distinction is important for accuracy.
+This page separates what was actually run on the robot from what the later VLM capstone only sketches as a cautious integration path.
+That distinction is not just wording. It affects what claims are technically defensible.
 
 ---
 
@@ -14,17 +14,17 @@ That distinction is important for accuracy.
 The earlier navigation project reached real robot deployment.
 A compact visual policy from the imitation-learning pipeline was integrated into a ROS runtime on the Go1 and used for real-time inference.
 
-### What this real-time stack included
+### What this stack included
 
 - low-latency model execution
 - direct perception-to-motion mapping
 - clipping and smoothing for stable commands
-- practical safety handling such as stop overrides and conservative post-processing
+- stop overrides and conservative post-processing
 
-### Why it matters
+### Engineering implication
 
-Phase 1 was a true robot deployment project.
-Its purpose was to show that a learned visual navigation model could be packaged and executed online on Go1 hardware.
+Phase 1 was a controller project.
+The main difficulty was keeping the system responsive and stable enough to use on hardware.
 
 ---
 
@@ -32,14 +32,14 @@ Its purpose was to show that a learned visual navigation model could be packaged
 
 ### 🧪 Offline first
 
-The later capstone solves a different problem.
-It studies whether pretrained VLMs can provide better **high-level social decisions** about how the robot should behave around people.
+The later capstone is not another controller project in the same sense.
+It asks whether pretrained VLMs can produce better decision labels for human-facing scenes than the earlier interface allowed.
 
 ### What the VLM layer provides
 
-- a semantic reasoning module
-- a slower decision policy over image sequences
-- high-level actions such as `STOP`, `FORWARD`, `LEFT`, `RIGHT`, and `REVIEW`
+- slower scene interpretation over short image sequences
+- explicit outputs such as `STOP`, `FORWARD`, `LEFT`, `RIGHT`, and `REVIEW`
+- a way to represent ambiguity instead of forcing everything into motor-style outputs
 
 ### Important clarification
 
@@ -50,42 +50,37 @@ The main evidence for this phase comes from offline benchmarking on curated Go1 
 
 ## Safety Projection Layer
 
-### ⚠️ Not deployed
-
-Raw VLM output should not directly control Go1.
-
-### Why not
+### ⚠️ Why raw VLM output should not drive Go1 directly
 
 - VLM latency is too high for fast closed-loop control
-- social predictions do not guarantee free space or collision clearance
-- lateral suggestions such as `LEFT` or `RIGHT` do not by themselves verify kinematic feasibility
-- semantic reasoning and motor execution operate at different timescales
+- the outputs do not guarantee free space or collision clearance
+- lateral suggestions such as `LEFT` or `RIGHT` do not verify kinematic feasibility
+- semantic judgments and motor execution operate on different timescales
 
 ### Recommended system split
 
-- the robot controller remains responsible for real-time safety and motion execution
-- geometry, local control, and fast collision avoidance remain in the low-level loop
-- the VLM provides slower semantic guidance about how to interpret the scene socially
+- the low-level controller remains responsible for real-time safety and motion execution
+- geometry and local control stay in the fast loop
+- the VLM layer only contributes slower scene interpretation and action suggestions
 
-> The VLM layer is best understood as a high-level social decision module, while the robot controller remains responsible for real-time safety and motion execution.
+### What this means in practice
 
-### What safety projection means in practice
-
-- `LEFT` and `RIGHT` can be preserved as advisory hints
-- a planner or controller can log or prefer those hints
+- `LEFT` and `RIGHT` can be logged or passed forward as advisory hints
 - the final executable action should still pass through a conservative safety layer
+- the value of the VLM layer is mostly in scene interpretation, not direct actuation
 
-This lets the VLM contribute to social interpretation without being granted direct motor authority.
+This is why the most honest description is a safety-projected advisory path, not an online VLM controller.
 
 ---
 
 ## Final Deployment Interpretation
 
-### In one line
+### In practical terms
 
-1. **Earlier project:** real-time imitation-learning navigation deployed on Go1
-2. **Later capstone:** offline VLM social-navigation benchmark plus a conservative advisory path for future integration
+1. **Earlier project:** a learned visual controller actually ran on Go1
+2. **Later capstone:** an offline decision benchmark explored what a more expressive human-aware interface might look like
 
-### Why this wording matters
+### Why this distinction matters
 
-This is the most accurate way to connect the two projects without overclaiming what the VLM phase achieved.
+If these two phases are collapsed into one story too aggressively, it sounds like the VLM policy was deployed in a way it was not.
+Keeping the distinction explicit is part of the engineering result, not just a disclaimer.

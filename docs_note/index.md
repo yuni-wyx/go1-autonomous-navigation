@@ -2,7 +2,7 @@
 
 ## One-Sentence Summary
 
-This report documents both an earlier real-time imitation-learning navigation pipeline and a later VLM-based social-navigation capstone. The VLM policy is evaluated primarily offline and should not be described as a fully deployed closed-loop robot controller.
+This report documents two related Go1 systems. The earlier one is a real-time imitation-learning navigation pipeline that ran on the robot. The later one is a VLM-based social-navigation capstone evaluated mainly offline. The second should not be described as a deployed closed-loop controller.
 
 ---
 
@@ -12,13 +12,16 @@ This report documents both an earlier real-time imitation-learning navigation pi
 
 - **Phase 1:** real-time imitation-learning navigation on Go1
 - **Phase 2:** VLM-based social-navigation benchmark on curated Go1 rosbags
-- **Final system view:** a fast controller paired with a slower semantic reasoning layer
+- **Final system view:** keep the fast controller, then add a slower layer for decisions that depend on people and temporal context
 
-### Why this progression matters
+### Why the project changed
 
-- The first phase asks whether a learned visual controller can run on the robot.
-- The second phase asks whether the robot can make more interpretable decisions around people.
-- Together, they show a move from low-level motion execution to higher-level social reasoning.
+The first phase was mostly a deployment problem:
+can a learned visual policy run online on the robot without becoming unstable?
+
+The second phase came from a different bottleneck.
+Once the robot can move, the harder question is what its decision interface should look like when a person appears in front of it.
+A stop/go output is often too coarse for crossings, receding motion, or ambiguous scenes.
 
 ---
 
@@ -26,25 +29,25 @@ This report documents both an earlier real-time imitation-learning navigation pi
 
 ### What this does
 
-- Collects teleoperation data from Go1 rosbags
-- Trains visual navigation policies such as ResNet-18-based models
-- Integrates the learned policy into a real-time ROS pipeline on the robot
+- collects teleoperation data from Go1 rosbags
+- trains visual navigation policies such as ResNet-18-based models
+- integrates the learned policy into a real-time ROS pipeline on the robot
 
 ### What the policy is trying to control
 
 - move forward when the path is clear
-- slow or stop when necessary
-- turn smoothly and stably
+- slow or stop when needed
+- turn smoothly enough to stay usable on hardware
 - keep inference lightweight enough for on-robot execution
 
-### Why it matters
+### Engineering focus
 
-This phase establishes the practical robotics foundation of the project:
+This phase is mostly about practical system issues:
 
-- data collection
-- preprocessing and alignment
-- training and packaging
-- real-time deployment on Go1
+- timestamp alignment
+- data coverage
+- runtime smoothing and clipping
+- keeping the controller stable enough to actually use
 
 ---
 
@@ -52,12 +55,13 @@ This phase establishes the practical robotics foundation of the project:
 
 ### Limitation of the earlier framing
 
-Imitation learning can reproduce observed navigation behavior, but it does not always explain **why** the robot should stop, go forward, yield left, yield right, or defer.
+Imitation learning can reproduce motion labels, but it does not automatically expose why the robot should stop, keep going, yield left, yield right, or defer.
 
-### Social scenes need more structure
+### What showed up in practice
 
-A centered person, a receding person, a late-entering person, and a crossing person are not equivalent cases.
-The navigation interface therefore needs richer outputs than simple low-level motion imitation.
+Once people entered the scene, the failure mode was not just control quality.
+It became a representation problem.
+A centered person, a receding person, a crossing person, and a late-entering person are different situations, but a low-level interface tends to collapse them.
 
 ---
 
@@ -66,7 +70,7 @@ The navigation interface therefore needs richer outputs than simple low-level mo
 ### What this does
 
 - evaluates pretrained vision-language models on Go1 image sequences
-- treats social navigation as a **high-level decision problem**
+- treats social navigation as a decision-label problem rather than a direct motor-control problem
 - expands the action space to:
   - `STOP`
   - `FORWARD`
@@ -74,16 +78,17 @@ The navigation interface therefore needs richer outputs than simple low-level mo
   - `RIGHT`
   - `REVIEW`
 
-### Key design choice
+### Key architectural decision
 
-The capstone does **not** fine-tune a new robot policy end to end.
-Instead, it uses pretrained VLMs as semantic reasoning modules and adds a prompt-policy layer for:
+The capstone does **not** fine-tune a new controller end to end.
+Instead, it uses pretrained VLMs and changes the prompt and output interface.
+That interface forces the model to account for:
 
-- crossing-direction logic
+- crossing direction
 - receding-person recovery
-- explicit uncertainty via `REVIEW`
+- uncertainty via `REVIEW`
 
-### What was evaluated
+### What was actually evaluated
 
 - 13 curated Go1 rosbag scenarios
 - single-image and sequence-based prompting
@@ -99,16 +104,13 @@ Instead, it uses pretrained VLMs as semantic reasoning modules and adds a prompt
 
 ### Phase 2
 
-`image sequence -> pretrained VLM reasoning -> structured social decision -> safety-projected controller path`
+`image sequence -> pretrained VLM -> structured decision label -> safety-projected controller path`
 
-### What changed architecturally
+### Why this split exists
 
-The later phase separates:
-
-- a **fast controller** for real-time execution and safety
-- a **slower semantic layer** for interpreting people and ambiguity
-
-This is important because raw VLM outputs are not suitable as low-latency motor commands.
+This split is not aesthetic.
+It comes from engineering constraints.
+Raw VLM outputs are too slow and too unconstrained to trust as low-level commands, but they are still useful when the hard part is interpreting human motion over time.
 
 ---
 
@@ -124,21 +126,12 @@ This is important because raw VLM outputs are not suitable as low-latency motor 
 ### Deployed or safety-projected in real time
 
 - the earlier imitation-learning stack was deployed on Go1 for real-time inference
-- the later VLM work defines a conservative path in which VLM outputs are treated as advisory signals and projected through safety logic before any executable robot action is considered
+- the later VLM work only defines a conservative path in which VLM outputs are treated as advisory signals and passed through safety logic before any executable robot action is considered
 
 ---
 
 ## Main Takeaway
 
-### In one line
-
-This project evolves from **learning how to move** to **reasoning about when and how to yield around people**.
-
-### Why that matters
-
-It shows not only model-building ability, but also systems thinking about:
-
-- deployment constraints
-- interface design
-- interpretability
-- safety in embodied AI
+The project started as a low-level navigation system and then turned into a question about decision representation.
+The most useful result was not that one model “solved” social navigation.
+It was learning which parts of the stack need fast reactive control, and which parts need a slower but more expressive interface for ambiguity and human motion.

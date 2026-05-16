@@ -48,19 +48,17 @@
 
         <h1 class="title">
           Go1 Autonomous Navigation:<br />
-          <span class="neon">From Imitation Learning to Social AI</span>
+          <span class="neon">From Imitation Learning to Social Navigation Decisions</span>
         </h1>
 
         <p class="hero-lead">
-          A two-phase system that evolves from real-time learned control to VLM-based social decision making.
+          A Go1 navigation stack that started with real-time learned control and later added an offline VLM decision layer for social scenes.
         </p>
 
         <p class="subtitle">
-          This project first deploys a real-time imitation-learning controller on Unitree Go1, then extends it with a VLM-based decision layer for human-aware navigation. The final system combines a fast controller with a slower semantic reasoning module.
-        </p>
-
-        <p class="hero-detail">
-          <strong>Phase 1</strong> focuses on on-robot execution with compact visual policies. <strong>Phase 2</strong> reframes the problem as an offline social-navigation benchmark using pretrained VLMs. The VLM path is presented as advisory and safety-projected, not as raw closed-loop robot control.
+          <strong>Phase 1:</strong> a real-time imitation-learning controller that actually ran on Go1.<br />
+          <strong>Phase 2:</strong> an offline VLM benchmark for social scenes and decision labels.<br />
+          <strong>Final system view:</strong> fast low-level control plus a slower, safety-projected VLM layer.
         </p>
 
         <div class="cta-row">
@@ -94,7 +92,7 @@
           <div class="holo-body">
             <div class="panel-kicker">Phase 1: Real-Time Reactive Navigation Metrics</div>
             <p class="panel-note">
-              These signals describe low-level motion and safety behavior. They are important for reactive navigation, but they are not the full story for human-aware social decisions.
+              These are the kinds of low-level signals that matter when the controller is trying to keep the robot moving and stable in real time. They are useful, but they do not tell the robot whether a person is receding, crossing, or simply ambiguous.
             </p>
 
             <div class="meter">
@@ -123,8 +121,8 @@
 
             <div class="terminal">
               <div class="terminal-line"><span class="k">phase_1</span> reactive safety signals for learned low-level control</div>
-              <div class="terminal-line"><span class="k">phase_2</span> semantic reasoning for people, crossings, and ambiguity</div>
-              <div class="terminal-line"><span class="k">system</span> fast controller + slow semantic reasoner</div>
+              <div class="terminal-line"><span class="k">phase_2</span> slower scene interpretation for people, crossings, and review cases</div>
+              <div class="terminal-line"><span class="k">system</span> low-level controller + safety-projected VLM layer</div>
               <div class="terminal-line dim" id="terminalBlink">_</div>
             </div>
           </div>
@@ -157,7 +155,7 @@
 
         <article class="card">
           <h3>Why Move Beyond Imitation Learning?</h3>
-          <p><strong>Why it matters:</strong> social navigation is not only about motion replication; it also requires interpretable decisions around people.</p>
+          <p><strong>Why the earlier setup was not enough:</strong> imitation learning can reproduce observed motion, but it does not make crossing direction, yielding behavior, or uncertainty explicit.</p>
           <ul class="bullets compact">
             <li>Binary stop/go is too coarse for crossing and ambiguity</li>
             <li>The robot needs a clearer semantic reason for yielding or deferring</li>
@@ -169,7 +167,7 @@
 
         <article class="card">
           <h3>Phase 2: Learning When and How to Yield</h3>
-          <p><strong>Key design choice:</strong> use pretrained VLMs as a high-level social decision layer rather than as raw robot control.</p>
+          <p><strong>Key design choice:</strong> keep the low-level controller separate, and use pretrained VLMs only for slower scene interpretation and decision suggestions.</p>
           <ul class="bullets compact">
             <li>Offline benchmark over curated Go1 rosbag scenarios</li>
             <li>Action space: <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span></li>
@@ -217,7 +215,7 @@
         <article class="phase-card highlight">
           <div class="phase-kicker">Final System</div>
           <h3>Fast Controller + Slow Semantic Reasoner</h3>
-          <p class="phase-goal">Goal: separate low-level execution from higher-level social interpretation.</p>
+          <p class="phase-goal">Goal: keep the fast controller for execution, and add a slower layer for cases where human motion changes the meaning of the scene.</p>
           <ul class="bullets compact">
             <li>Fast controller remains responsible for real-time safety and motion</li>
             <li>VLM layer provides slower advisory social decisions and review signals</li>
@@ -225,36 +223,30 @@
         </article>
       </div>
 
-      <div class="timeline detail-timeline">
-        <div class="step">
-          <div class="step-dot"></div>
-          <div class="step-body">
-            <h3>Phase 1: Real-Time Imitation Learning Navigation</h3>
-            <p>
-              I collected Go1 rosbag data under teleoperation, extracted image and motion pairs, trained visual navigation policies, and deployed them as real-time ROS inference nodes. This phase emphasized low latency, smoothing, safety clipping, and stable on-robot behavior.
-            </p>
-          </div>
-        </div>
+      <div class="grid-3 quick-summary">
+        <article class="card compact-card">
+          <h3>What changed in Phase 1</h3>
+          <ul class="bullets compact">
+            <li>Robot-side runtime stability became the main constraint.</li>
+            <li>Smoothing, clipping, and latency mattered as much as model quality.</li>
+          </ul>
+        </article>
 
-        <div class="step">
-          <div class="step-dot"></div>
-          <div class="step-body">
-            <h3>Transition: Why a Semantic Decision Layer Was Needed</h3>
-            <p>
-              Once the robot could execute low-level movement, the harder issue became deciding what to do around people. Social scenes require reasoning about position, motion, crossing direction, and uncertainty. That is where imitation-style low-level outputs become difficult to interpret and audit.
-            </p>
-          </div>
-        </div>
+        <article class="card compact-card">
+          <h3>What broke the old framing</h3>
+          <ul class="bullets compact">
+            <li>Person-dependent scenes were not well represented by stop/go outputs.</li>
+            <li>Crossings, receding motion, and ambiguity kept collapsing together.</li>
+          </ul>
+        </article>
 
-        <div class="step">
-          <div class="step-dot"></div>
-          <div class="step-body">
-            <h3>Phase 2: VLM Social Navigation Capstone</h3>
-            <p>
-              I built an offline benchmark that extracts front-camera image sequences from 13 curated Go1 rosbags and evaluates pretrained VLMs as high-level social decision policies. The main contribution is a prompt-policy layer that expands the action space to <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span> and uses sequence-based reasoning instead of pure single-frame classification.
-            </p>
-          </div>
-        </div>
+        <article class="card compact-card">
+          <h3>What Phase 2 changed</h3>
+          <ul class="bullets compact">
+            <li>The action space expanded to <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span>.</li>
+            <li>The VLM layer stayed offline-first and advisory rather than executable.</li>
+          </ul>
+        </article>
       </div>
     </section>
 
@@ -269,7 +261,7 @@
       <div class="grid-2">
         <article class="card">
           <h3>Phase 1 Signals</h3>
-          <p><strong>What these signals do:</strong> traversability, obstacle risk, and stability help the robot move safely and react quickly.</p>
+          <p><strong>What these signals do:</strong> traversability, obstacle risk, and stability are useful for keeping the robot moving without obvious collisions or unstable behavior.</p>
           <ul class="bullets compact">
             <li>Useful for reactive navigation and low-level motion safety</li>
             <li>Good at answering whether the robot can move through local space</li>
@@ -278,7 +270,7 @@
 
         <article class="card">
           <h3>Why Semantics Was Added</h3>
-          <p><strong>Why it matters:</strong> low-level risk signals do not explain social intent around humans.</p>
+          <p><strong>Why they were not enough:</strong> a high obstacle score can tell you something is in front of the robot, but not whether that person is moving away, crossing leftward, or entering too late to infer intent.</p>
           <ul class="bullets compact">
             <li>They do not capture crossing direction, yielding behavior, or ambiguity</li>
             <li>The VLM layer adds semantic interpretation on top of those signals</li>
@@ -307,9 +299,9 @@
         <div class="result-block">
           <div class="result-label">Interpretation</div>
           <ul class="bullets compact">
-            <li>VLM prompting enables structured social decisions beyond binary stop/go</li>
-            <li>Performance is still limited by perception reliability in crossings and late-entry scenes</li>
-            <li>VLM latency and uncertainty prevent direct low-level real-time control</li>
+            <li>The five-action interface exposes decisions that a binary stop/go policy cannot represent</li>
+            <li>Crossings and late-entry cases still fail mainly because person activation is unreliable</li>
+            <li>Latency and missing geometric guarantees rule out direct low-level VLM control</li>
           </ul>
         </div>
       </div>
@@ -334,16 +326,16 @@
             <span class="mono">10 / 5</span>
           </div>
           <p class="note">
-            In the saved <span class="mono">final_policy_v2_crossing</span> benchmark, both sequence methods reached 0.60 primary-case accuracy across the 10 non-review bags. The VLM phase should be read as an offline social-navigation benchmark rather than a fully deployed closed-loop controller.
+            Saved run: <span class="mono">final_policy_v2_crossing</span>. Read this as an offline benchmark, not a deployed controller.
           </p>
         </article>
 
         <article class="card">
-          <h3>What the Numbers Mean</h3>
+          <h3>What the Benchmark Actually Shows</h3>
           <ul class="bullets compact">
-            <li><strong>Where VLM helped:</strong> receding-person cases benefited from temporal reasoning.</li>
-            <li><strong>Where it struggled:</strong> crossing and entering-late cases still often collapsed to unsafe <span class="mono">FORWARD</span>.</li>
-            <li><strong>Why <span class="mono">REVIEW</span> matters:</strong> it gives the policy an explicit uncertainty channel instead of forcing brittle answers.</li>
+            <li><strong>Where it helped:</strong> receding-person cases improved when the model saw short temporal windows instead of one still frame.</li>
+            <li><strong>Where it still failed:</strong> several crossing and entering-late bags still collapsed to unsafe <span class="mono">FORWARD</span> predictions.</li>
+            <li><strong>Why <span class="mono">REVIEW</span> matters:</strong> it gives the evaluator a place to put genuine uncertainty instead of pretending every scene has a confident action.</li>
           </ul>
         </article>
       </div>
@@ -389,7 +381,7 @@
       <div class="callout-card">
         <h3>Final System Interpretation</h3>
         <p>
-          <strong>The VLM layer is best understood as a high-level social decision module, while the robot controller remains responsible for real-time safety and motion execution.</strong>
+          <strong>Low-level controller for fast motion and safety. VLM layer for slower scene interpretation and action suggestions.</strong>
         </p>
       </div>
     </section>
@@ -422,28 +414,28 @@
 
     <section class="section">
       <div class="section-head">
-        <h2>Why This Project Matters</h2>
+        <h2>Engineering Takeaways</h2>
         <p>
-          The strongest signal in this portfolio is not only model performance, but system-level thinking across robotics, learning, evaluation, and safety.
+          The most useful outcome of this work was not one final accuracy number. It was learning where each layer helps, where it fails, and what should or should not be trusted in a real robot stack.
         </p>
       </div>
 
       <div class="grid-2">
         <article class="card">
-          <h3>Why it stands out</h3>
+          <h3>What changed architecturally</h3>
           <ul class="bullets compact">
-            <li>Bridges low-level control and high-level semantic reasoning</li>
-            <li>Shows end-to-end systems thinking, not just model training</li>
-            <li>Highlights safety-aware AI design under real-world constraints</li>
+            <li>The early stack assumed that if the controller output was good enough, the navigation problem was mostly solved.</li>
+            <li>The social-navigation bags broke that assumption because the missing piece was often representation, not only control quality.</li>
+            <li>The final split came from that failure: fast control below, slower interpretation above, with a safety boundary in between.</li>
           </ul>
         </article>
 
         <article class="card">
-          <h3>What it signals about the researcher</h3>
+          <h3>What the experiments made clear</h3>
           <ul class="bullets compact">
-            <li>Can ship real robot pipelines, not only offline notebooks</li>
-            <li>Can refine problem formulation when the first model family becomes limiting</li>
-            <li>Understands latency, uncertainty, and interface design in embodied AI</li>
+            <li>Reactive signals are still necessary, but they leave several person-dependent scenes underspecified.</li>
+            <li>Sequence context helps in some bags, especially receding motion, but the crossing failures show that better temporal wording alone is not enough.</li>
+            <li>Any future online use of the VLM layer would need explicit projection and probably a clearer contract with the lower-level planner.</li>
           </ul>
         </article>
       </div>
