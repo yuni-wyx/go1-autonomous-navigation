@@ -2,7 +2,7 @@
 
 This report documents two related Go1 navigation studies.
 The first is an earlier imitation-learning pipeline that reached real-time deployment on the robot.
-The second is a later VLM-based social-navigation capstone evaluated mainly offline.
+The second is a later VLM-based social-navigation capstone whose reported benchmark is offline, while the broader study also includes online integration experiments and safety-projected decision paths.
 The VLM policy should not be described as a fully deployed closed-loop robot controller.
 
 ## How to read this site
@@ -39,7 +39,7 @@ Focus:
 
 - higher-level social decisions rather than direct motor commands
 - action space `STOP / FORWARD / LEFT / RIGHT / REVIEW`
-- offline benchmark on curated Go1 social-navigation bags
+- offline benchmark on curated Go1 social-navigation bags, plus controller-side integration studies
 
 Read next:
 

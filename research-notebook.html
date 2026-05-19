@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Research Notebook | Go1</title>
-  <meta name="description" content="Technical notes behind the Go1 navigation studies." />
+  <meta name="description" content="Technical notes, artifacts, and future directions behind the Go1 navigation studies." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -105,7 +105,7 @@
       <div class="section-head">
         <h2>Phase 2 — Social Navigation</h2>
         <p>
-          Notes from the VLM-based social-navigation study: decision labels, benchmark design, observations, and deployment boundary.
+          Notes from the VLM-based social-navigation study: decision labels, benchmark design, online integration boundaries, observations, and deployment boundary.
         </p>
       </div>
 
@@ -113,9 +113,9 @@
         <div class="notes-grid notebook-grid">
           <article class="card note-link-card">
             <h4>VLM Social Navigation Overview</h4>
-            <p>Study scope, benchmark framing, and the main deployment boundary for the later phase.</p>
+            <p>Study scope, benchmark framing, and how the later phase combines offline reporting with online integration experiments.</p>
             <div class="note-file">docs_note/vlm_social_navigation.md</div>
-            <a class="text-link" href="note-view.html?doc=docs_note/vlm_social_navigation.md&title=VLM%20Social%20Navigation%20Overview&subtitle=Offline%20VLM%20decision%20study&summary=This%20note%20summarizes%20the%20later%20Go1%20social-navigation%20study%20and%20its%20main%20boundaries.&parent=Research%20Notebook&parentHref=research-notebook.html">Open note →</a>
+            <a class="text-link" href="note-view.html?doc=docs_note/vlm_social_navigation.md&title=VLM%20Social%20Navigation%20Overview&subtitle=Benchmark%20results%20and%20integration%20boundary&summary=This%20note%20summarizes%20the%20later%20Go1%20social-navigation%20study%2C%20its%20reported%20benchmark%2C%20and%20its%20integration%20boundary.&parent=Research%20Notebook&parentHref=research-notebook.html">Open note →</a>
           </article>
           <article class="card note-link-card">
             <h4>Decision Representation</h4>
@@ -140,6 +140,58 @@
             <p>Why the VLM stayed advisory and how safety projection fits the shared system view.</p>
             <div class="note-file">docs_note/deployment.md</div>
             <a class="text-link" href="note-view.html?doc=docs_note/deployment.md&title=Deployment%20Boundary&subtitle=Real-time%20vs.%20offline%20separation&summary=This%20note%20separates%20the%20offline%20VLM%20study%20from%20the%20earlier%20real-time%20controller%20deployment.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=what-the-vlm-capstone-proposes">Open note →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Future Direction</h2>
+        <p>
+          Open questions and next steps connecting motion learning, semantic reasoning, and safety layers.
+        </p>
+      </div>
+
+      <div class="notebook-frame card">
+        <div class="notes-grid notebook-grid">
+          <article class="card note-link-card">
+            <h4>Future Work</h4>
+            <p>Open questions around arbitration, REVIEW calibration, crossing robustness, and future controller integration.</p>
+            <div class="note-file">docs_note/future_work.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/future_work.md&title=Future%20Work&subtitle=Open%20technical%20directions&summary=This%20note%20collects%20the%20main%20future%20directions%20for%20the%20Go1%20navigation%20studies.&parent=Research%20Notebook&parentHref=research-notebook.html">Open note →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Research Artifacts</h2>
+        <p>
+          Compact project artifacts connected to the report, slides, and future technical directions.
+        </p>
+      </div>
+
+      <div class="notebook-frame card">
+        <div class="notes-grid notebook-grid">
+          <article class="card note-link-card">
+            <h4>Final Presentation</h4>
+            <p>Visitor-facing PDF export of the final VLM social-navigation presentation.</p>
+            <div class="note-file">assets/vlm-final-report.pdf</div>
+            <a class="text-link" href="./assets/vlm-final-report.pdf">Final Presentation (PDF) →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Future Work Notes</h4>
+            <p>Engineering roadmap note connecting motion learning, semantic reasoning, and safety projection.</p>
+            <div class="note-file">docs_note/future_work.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/future_work.md&title=Future%20Work&subtitle=Open%20technical%20directions&summary=This%20note%20collects%20the%20main%20future%20directions%20for%20the%20Go1%20navigation%20studies.&parent=Research%20Notebook&parentHref=research-notebook.html">Open note →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Benchmark Notes</h4>
+            <p>Saved-run setup, metrics, and failure-case interpretation behind the VLM evaluation.</p>
+            <div class="note-file">docs_note/experiments.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/experiments.md&title=Benchmark%20Setup%20and%20Results&subtitle=Offline%20VLM%20evaluation%20notes&summary=This%20note%20summarizes%20the%20saved%20benchmark,%20core%20metrics,%20and%20failure%20cases%20from%20the%20VLM%20study.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=benchmark-setup">Open note →</a>
           </article>
         </div>
       </div>

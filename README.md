@@ -1,24 +1,64 @@
-# Unitree Go1: Vision-Based Navigation (ROS + Deep Learning)
+# Go1 Autonomous Navigation Site
 
-This project is a hands-on robotics + machine learning exploration using Unitree Go1.
-I collected real-world data with ROS (Melodic), trained a ResNet-18 vision model with PyTorch, and deployed the model back onto the robot for on-device inference.
+This directory contains the visitor-facing Go1 research portfolio site.
+It presents two related studies and a shared note archive without exposing the underlying repository layout to readers.
 
-## Highlights
-- Collected real-world robot data using joystick teleop + `rosbag`
-- Built a dataset pipeline: ROS image topics → extracted frames → training set
-- Trained a ResNet-18 model (PyTorch) and achieved strong validation accuracy
-- Deployed the model onto Go1 and successfully ran inference on the robot
+## Site Pages
 
-## Technical Blog (GitHub Pages)
-Full write-up:
-- https://yuni-wyx.github.io/go1-autonomous-navigation/
+- `index.html`
+  - portfolio overview and study map
+- `imitation-learning.html`
+  - Study 1: motion learning and real-time robot deployment
+- `vlm-social-navigation.html`
+  - Study 2: social-navigation benchmark results plus controller-side integration framing
+- `research-notebook.html`
+  - shared technical archive across both studies
+- `note-view.html`
+  - note reader that renders markdown notes inside the site layout
 
-## Tech Stack
-ROS Melodic · Python · PyTorch · OpenCV · ResNet-18 · rosbag · Teleop/Joystick
+## Markdown Archive
 
-## Repo Structure
-- `docs/`: GitHub Pages blog
-- `assets/`: figures (pipeline diagram, results, etc.)
+- `docs_note/`
+  - source notes used by `note-view.html`
+  - keep markdown here as the source of truth for notebook content
 
-## Notes
-This write-up focuses on the end-to-end system: data collection, dataset construction, model training, and on-robot deployment.
+Current notebook topics include:
+
+- imitation-learning overview
+- VLM social-navigation overview
+- model and pipeline notes
+- data and telemetry notes
+- experiments and benchmark notes
+- deployment boundary notes
+- future work notes
+
+## Artifacts
+
+- `assets/`
+  - site images, diagrams, and local media
+- `presentations/`
+  - not used as a separate directory right now; slide artifacts currently live under `assets/`
+- `assets/vlm-final-report.pptx`
+  - editable source slides for the final presentation
+- `assets/vlm-final-report.pdf`
+  - visitor-facing PDF export of the final presentation
+- `assets/vlm-social.mp4`
+  - local study media for the VLM social-navigation page
+- `docs_note/future_work.md`
+  - future directions note for the shared research archive
+- `research-notebook.html`
+  - links out to the slides and technical notes
+
+## Maintenance Notes
+
+- Keep navigation labels consistent:
+  - `Overview`
+  - `Imitation Learning`
+  - `VLM Social Navigation`
+  - `Research Notebook`
+- New technical writeups should usually be added under `docs_note/` and opened through `note-view.html`.
+- Visitor-facing content should avoid local filesystem paths or implementation-only workspace references.
+- Study 2 wording should keep the distinction clear:
+  - reported benchmark: offline
+  - broader study: offline evaluation plus online integration experiments
+  - no raw VLM closed-loop motor-control claim

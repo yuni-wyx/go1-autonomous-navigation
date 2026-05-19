@@ -2,7 +2,7 @@
 
 ## Page Summary
 
-This page separates what was actually run on the robot from what the later VLM capstone only sketches as a cautious integration path.
+This page separates what was actually run on the robot from what the later VLM capstone explored through a cautious integration path.
 That distinction is not just wording. It affects what claims are technically defensible.
 
 ---
@@ -40,11 +40,12 @@ It asks whether pretrained VLMs can produce better decision labels for human-fac
 - slower scene interpretation over short image sequences
 - explicit outputs such as `STOP`, `FORWARD`, `LEFT`, `RIGHT`, and `REVIEW`
 - a way to represent ambiguity instead of forcing everything into motor-style outputs
+- a controller-side path for safety-projected online decision studies
 
 ### Important clarification
 
 It should **not** be described as a fully deployed closed-loop robot controller.
-The main evidence for this phase comes from offline benchmarking on curated Go1 rosbags.
+The reported evidence comes mainly from offline benchmarking on curated Go1 rosbags, while the broader study also included online integration experiments around wrapper calls, controller paths, and safety-projected execution.
 
 ---
 
@@ -78,7 +79,7 @@ This is why the most honest description is a safety-projected advisory path, not
 ### In practical terms
 
 1. **Earlier project:** a learned visual controller actually ran on Go1
-2. **Later capstone:** an offline decision benchmark explored what a more expressive human-aware interface might look like
+2. **Later capstone:** an offline decision benchmark, plus controller-side integration experiments, explored what a more expressive human-aware interface might look like
 
 ### Why this distinction matters
 
