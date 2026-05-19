@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research Notes | Go1</title>
+  <meta name="description" content="Go1 research notes viewer." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/favicon.png">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-dot"></span>
+      <span>GO1 // CAIRO LAB</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html">Overview</a>
+      <a href="imitation-learning.html">Imitation Learning</a>
+      <a href="vlm-social-navigation.html">VLM Social Navigation</a>
+      <a href="vlm-social-navigation.html#results">Results</a>
+      <a href="vlm-social-navigation.html#deployment">Deployment Boundary</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main id="top">
+    <section class="hero hero-single note-hero">
+      <div class="hero-left hero-full">
+        <div class="chip">
+          <span class="chip-pulse"></span>
+          research notes
+        </div>
+
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <a href="index.html">Overview</a>
+          <span>›</span>
+          <a id="noteParentLink" href="index.html">Study</a>
+          <span>›</span>
+          <span id="noteCrumbCurrent">Notes</span>
+        </nav>
+
+        <h1 class="title note-title" id="noteTitle">Research Notes</h1>
+        <p class="hero-lead" id="noteSubtitle">Supporting detail page</p>
+        <p class="hero-detail" id="noteSummary">This page wraps a supporting markdown note inside the site layout so it reads like part of the research portfolio rather than a raw document.</p>
+
+        <div class="cta-row">
+          <a class="btn primary" id="noteBackStudy" href="index.html">Back to Study</a>
+          <a class="btn ghost" href="index.html">Back to Overview</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Note Content</h2>
+        <p id="noteSourceLine">Source note rendered from the project documentation.</p>
+      </div>
+
+      <article class="card markdown-card">
+        <div id="noteContent" class="markdown-body">
+          <p>Loading note...</p>
+        </div>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span class="mono">©</span> <span id="year"></span> GO1 / CAIRO LAB — Built by Yuni Wu
+      </div>
+      <div class="footer-right">
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

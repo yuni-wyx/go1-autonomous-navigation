@@ -362,17 +362,185 @@
   }
 
   // -----------------------------
+  // Note view markdown wrapper
+  // -----------------------------
+  const noteContent = $("#noteContent");
+  if (noteContent) {
+    const params = new URLSearchParams(window.location.search);
+    const doc = params.get("doc");
+    const title = params.get("title") || "Research Notes";
+    const subtitle = params.get("subtitle") || "Supporting detail page";
+    const summary = params.get("summary") || "Source note rendered from the project documentation.";
+    const parent = params.get("parent") || "Overview";
+    const parentHref = params.get("parentHref") || "index.html";
+    const focus = params.get("focus");
+
+    const noteTitle = $("#noteTitle");
+    const noteCrumbCurrent = $("#noteCrumbCurrent");
+    const noteSubtitle = $("#noteSubtitle");
+    const noteSummary = $("#noteSummary");
+    const noteParentLink = $("#noteParentLink");
+    const noteBackStudy = $("#noteBackStudy");
+    const noteSourceLine = $("#noteSourceLine");
+
+    if (noteTitle) noteTitle.textContent = title;
+    if (noteCrumbCurrent) noteCrumbCurrent.textContent = title;
+    if (noteSubtitle) noteSubtitle.textContent = subtitle;
+    if (noteSummary) noteSummary.textContent = summary;
+    if (noteParentLink) {
+      noteParentLink.textContent = parent;
+      noteParentLink.setAttribute("href", parentHref);
+    }
+    if (noteBackStudy) {
+      noteBackStudy.textContent = `Back to ${parent}`;
+      noteBackStudy.setAttribute("href", parentHref);
+    }
+    if (noteSourceLine) noteSourceLine.textContent = "Source note rendered from the project documentation.";
+    if (doc) document.title = `${title} | Go1`;
+
+    const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const escapeHtml = (s) => s.replace(/[&<>]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+    const inline = (s) => s
+      .replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+    const renderMarkdown = (md) => {
+      const lines = md.replace(/\r\n/g, "\n").split("\n");
+      let html = "";
+      let inList = false;
+      let inCode = false;
+      let codeLines = [];
+      let para = [];
+
+      const flushPara = () => {
+        if (!para.length) return;
+        html += `<p>${inline(para.join(" "))}</p>`;
+        para = [];
+      };
+      const flushList = () => {
+        if (!inList) return;
+        html += "</ul>";
+        inList = false;
+      };
+      const flushCode = () => {
+        if (!inCode) return;
+        html += `<pre><code>${escapeHtml(codeLines.join("\n"))}</code></pre>`;
+        inCode = false;
+        codeLines = [];
+      };
+
+      for (const line of lines) {
+        if (line.startsWith("```")) {
+          flushPara();
+          flushList();
+          if (inCode) flushCode();
+          else inCode = true;
+          continue;
+        }
+        if (inCode) {
+          codeLines.push(line);
+          continue;
+        }
+        if (!line.trim()) {
+          flushPara();
+          flushList();
+          continue;
+        }
+        if (line.trim() === "---") {
+          flushPara();
+          flushList();
+          html += "<hr />";
+          continue;
+        }
+        const h = line.match(/^(#{1,3})\s+(.*)$/);
+        if (h) {
+          flushPara();
+          flushList();
+          const level = h[1].length;
+          const text = h[2].trim();
+          const id = slugify(text);
+          const focusClass = focus && focus === id ? ' class="focus-heading"' : "";
+          html += `<h${level} id="${id}"${focusClass}>${inline(text)}</h${level}>`;
+          continue;
+        }
+        const li = line.match(/^[-*]\s+(.*)$/);
+        if (li) {
+          flushPara();
+          if (!inList) {
+            html += "<ul>";
+            inList = true;
+          }
+          html += `<li>${inline(li[1])}</li>`;
+          continue;
+        }
+        para.push(line.trim());
+      }
+
+      flushPara();
+      flushList();
+      flushCode();
+      return html;
+    };
+
+    if (!doc) {
+      noteContent.innerHTML = "<p>Missing note source.</p>";
+    } else {
+      fetch(doc)
+        .then((res) => {
+          if (!res.ok) throw new Error(`Failed to load ${doc}`);
+          return res.text();
+        })
+        .then((md) => {
+          noteContent.innerHTML = renderMarkdown(md);
+          if (focus) {
+            const el = document.getElementById(focus);
+            if (el) el.scrollIntoView({ block: "start" });
+          }
+        })
+        .catch(() => {
+          noteContent.innerHTML = "<p>Unable to load the note content.</p>";
+        });
+    }
+  }
+
+  // -----------------------------
   // VLM action-space explainer
   // -----------------------------
   const socialButtons = $$('[data-social-action]');
   const decisionExplainer = $('#decisionExplainer');
 
   const socialActionCopy = {
-    STOP: 'Yield or pause when a person is directly ahead or approaching.',
-    FORWARD: 'Continue when the path is socially clear.',
-    LEFT: 'High-level side preference toward the left, not a raw motor command.',
-    RIGHT: 'High-level side preference toward the right, not a raw motor command.',
-    REVIEW: 'Uncertainty fallback when the scene is ambiguous.'
+    STOP: {
+      meaning: 'Yield or pause when a person is directly ahead or approaching.',
+      typical: 'Approaching or directly blocked person.',
+      why: 'Keeps the policy conservative in socially occupied space.',
+      boundary: 'High-level decision only, not a direct brake command.'
+    },
+    FORWARD: {
+      meaning: 'Continue when the path is socially clear.',
+      typical: 'Empty path or receding person with reopened corridor.',
+      why: 'Avoids stopping just because a person is still faintly visible.',
+      boundary: 'Still depends on the lower motion stack for safe execution.'
+    },
+    LEFT: {
+      meaning: 'High-level side preference toward the left.',
+      typical: 'Crossing or occupied scene where the left side is the better social option.',
+      why: 'Lets the policy express lateral intent instead of collapsing to stop/go.',
+      boundary: 'Not a raw motor command and still needs safety projection.'
+    },
+    RIGHT: {
+      meaning: 'High-level side preference toward the right.',
+      typical: 'Crossing or occupied scene where the right side is the better social option.',
+      why: 'Makes directional avoidance explicit at the decision level.',
+      boundary: 'Not a raw motor command and still needs safety projection.'
+    },
+    REVIEW: {
+      meaning: 'Uncertainty interface for ambiguous scenes.',
+      typical: 'Ambiguous crossing, late entry, or unclear person intent.',
+      why: 'Avoids forcing a confident label when the scene is not clear enough.',
+      boundary: 'Should not be read as failure by itself.'
+    }
   };
 
   const setSocialAction = (action) => {
@@ -385,7 +553,10 @@
     if (decisionExplainer) {
       decisionExplainer.innerHTML = `
         <div class="decision-explainer-title">${action}</div>
-        <p>${socialActionCopy[action] || ''}</p>
+        <p><strong>Meaning:</strong> ${socialActionCopy[action]?.meaning || ''}</p>
+        <p><strong>Typical situation:</strong> ${socialActionCopy[action]?.typical || ''}</p>
+        <p><strong>Why it exists:</strong> ${socialActionCopy[action]?.why || ''}</p>
+        <p><strong>Deployment note:</strong> ${socialActionCopy[action]?.boundary || ''}</p>
       `;
     }
   };

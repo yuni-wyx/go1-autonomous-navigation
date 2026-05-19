@@ -8,7 +8,7 @@ The second one is chosen because it can express distinctions that the first inte
 
 ---
 
-## Part A: Imitation-Learning Model
+## Imitation Learning Model
 
 ### What this does
 
@@ -48,7 +48,7 @@ The downside is that this kind of model says little about why a scene should map
 
 ---
 
-## Part B: VLM Social-Navigation Model
+## VLM Social Navigation Model
 
 ### What this does
 

@@ -9,7 +9,7 @@ The Go1 work uses two related but distinct kinds of data:
 
 ---
 
-## Part A: Imitation-Learning Data
+## Imitation Learning Data
 
 ### What this data is
 
@@ -40,7 +40,7 @@ This is the data foundation for a deployable visual controller.
 
 ---
 
-## Part B: VLM Social-Navigation Benchmark Data
+## Social Navigation Benchmark Data
 
 ### What this data is
 
