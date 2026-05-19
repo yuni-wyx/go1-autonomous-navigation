@@ -39,8 +39,8 @@
   </header>
 
   <main id="top">
-    <section class="hero hero-single">
-      <div class="hero-left hero-full">
+    <section class="hero">
+      <div class="hero-left">
         <div class="chip">
           <span class="chip-pulse"></span>
           Study 2 • offline social-navigation decision benchmark
@@ -59,8 +59,8 @@
         </p>
 
         <div class="cta-row">
-          <a class="btn primary" href="#benchmark">Benchmark Setup</a>
-          <a class="btn ghost" href="#deployment">Deployment Boundary</a>
+          <a class="btn primary" href="#decision">Decision Representation</a>
+          <a class="btn ghost" href="index.html">Back to Overview</a>
         </div>
 
         <div class="stats">
@@ -78,19 +78,86 @@
           </div>
         </div>
       </div>
+
+      <div class="hero-right">
+        <div class="holo-card benchmark-card">
+          <div class="holo-header">
+            <span>SOCIAL DECISION BENCHMARK</span>
+            <span class="badge">OFFLINE</span>
+          </div>
+
+          <div class="holo-body">
+            <div class="panel-kicker">Benchmark Dashboard</div>
+            <p class="panel-note">
+              This panel summarizes the offline decision benchmark. It is not a live robot-control dashboard.
+            </p>
+
+            <div class="benchmark-mini-grid">
+              <div class="mini-metric">
+                <span class="mini-label">Bags</span>
+                <span class="mini-value">13</span>
+              </div>
+              <div class="mini-metric">
+                <span class="mini-label">Consensus</span>
+                <span class="mini-value">0.60</span>
+              </div>
+              <div class="mini-metric">
+                <span class="mini-label">Primary</span>
+                <span class="mini-value">0.60</span>
+              </div>
+              <div class="mini-metric">
+                <span class="mini-label">Window / Frames</span>
+                <span class="mini-value">10 / 5</span>
+              </div>
+            </div>
+
+            <div class="decision-panel">
+              <div class="decision-label">Action Space</div>
+              <div class="decision-pills" role="tablist" aria-label="Social decision actions">
+                <button class="decision-pill active" type="button" data-social-action="STOP">STOP</button>
+                <button class="decision-pill" type="button" data-social-action="FORWARD">FORWARD</button>
+                <button class="decision-pill" type="button" data-social-action="LEFT">LEFT</button>
+                <button class="decision-pill" type="button" data-social-action="RIGHT">RIGHT</button>
+                <button class="decision-pill" type="button" data-social-action="REVIEW">REVIEW</button>
+              </div>
+              <div class="decision-explainer" id="decisionExplainer">
+                <div class="decision-explainer-title">STOP</div>
+                <p>Yield or pause when a person is directly ahead or approaching.</p>
+              </div>
+            </div>
+
+            <div class="flow-panel">
+              <span>Frames</span>
+              <span class="flow-arrow">→</span>
+              <span>VLM Prompt</span>
+              <span class="flow-arrow">→</span>
+              <span>Social Decision</span>
+              <span class="flow-arrow">→</span>
+              <span>Safety Projection</span>
+            </div>
+
+            <div class="terminal benchmark-terminal">
+              <div class="terminal-line"><span class="k">scope</span> extracted frames from curated Go1 bags</div>
+              <div class="terminal-line"><span class="k">output</span> high-level labels, not raw motor commands</div>
+            </div>
+          </div>
+
+          <div class="holo-glow" aria-hidden="true"></div>
+        </div>
+      </div>
     </section>
 
     <section id="motivation" class="section">
       <div class="section-head">
-        <h2>Research Motivation</h2>
+        <h2>Why Imitation Learning Was Not Enough</h2>
         <p>
-          The move to VLM evaluation came from a representation bottleneck: binary stop/go behavior was too coarse once the scene depended on people and motion over time.
+          The move to VLM evaluation came from a representation bottleneck. Motion control is not the same as social decision-making once people appear in the scene.
         </p>
       </div>
 
       <div class="grid-2">
         <article class="card">
-          <h3>Why the earlier interface was too limited</h3>
+          <h3>What the earlier interface was missing</h3>
           <ul class="bullets compact">
             <li><span class="mono">STOP</span> and <span class="mono">FORWARD</span> alone cannot express yielding left, yielding right, or deferring under uncertainty.</li>
             <li>Crossing direction, receding motion, and late-entering people can collapse into the same low-level response.</li>
@@ -99,17 +166,17 @@
         </article>
 
         <article class="card">
-          <h3>Why use VLMs here</h3>
+          <h3>What changed in this study</h3>
           <ul class="bullets compact">
-            <li>Pretrained VLMs may offer a more semantic reading of person-dependent scenes.</li>
-            <li>The project changes the prompt and output interface rather than training a new controller from scratch.</li>
-            <li>The VLM is treated as a slower reasoning module, not as a low-level actuator.</li>
+            <li>The project uses pretrained VLMs as a semantic reasoning module rather than training a new controller from scratch.</li>
+            <li>The intervention is the decision interface: a richer output space and prompt structure over short image sequences.</li>
+            <li>The goal is not direct actuation. It is better decision-level interpretation around people.</li>
           </ul>
         </article>
       </div>
     </section>
 
-    <section class="section">
+    <section id="decision" class="section">
       <div class="section-head">
         <h2>Decision Representation</h2>
         <p>
@@ -130,11 +197,11 @@
         </article>
 
         <article class="card">
-          <h3>Why <span class="mono">REVIEW</span> was added</h3>
+          <h3>Why <span class="mono">REVIEW</span> matters</h3>
           <ul class="bullets compact">
             <li>Ambiguous social scenes should not always be forced into a hard binary action.</li>
             <li><span class="mono">REVIEW</span> makes uncertainty visible instead of hiding it.</li>
-            <li>That does not solve calibration by itself, but it is still a more honest interface.</li>
+            <li>It is best understood as an uncertainty interface, not as proof that calibration is solved.</li>
           </ul>
         </article>
       </div>
@@ -152,17 +219,17 @@
         <article class="card compact-card">
           <h3>Data</h3>
           <ul class="bullets compact">
-            <li>13 curated Go1 social-navigation bags</li>
+            <li>Curated Go1 social-navigation bags</li>
             <li>Decision-level labels rather than low-level control labels</li>
-            <li>Scenario types include crossing, approaching, receding, entering-late, and review-oriented cases</li>
+            <li>Crossing, approaching, receding, entering-late, and review-oriented cases</li>
           </ul>
         </article>
 
         <article class="card compact-card">
           <h3>Sequence Setting</h3>
           <ul class="bullets compact">
-            <li>Sequence window length <span class="mono">10</span></li>
-            <li>Max frames per VLM call <span class="mono">5</span></li>
+            <li>Final setting: 10-frame windows</li>
+            <li>At most 5 images sent per VLM call</li>
             <li>Capped temporal subsampling from extracted frame windows</li>
           </ul>
         </article>
@@ -180,92 +247,18 @@
 
     <section id="results" class="section">
       <div class="section-head">
-        <h2>Key Results</h2>
+        <h2>Observations from the Saved Run</h2>
         <p>
-          The numbers are more useful as diagnostic signals than as a claim that the problem is solved.
-        </p>
-      </div>
-
-      <div class="result-highlight">
-        <div class="result-block">
-          <div class="result-label">Benchmark Summary</div>
-          <ul class="bullets compact strong-list">
-            <li><strong>13 curated social navigation scenarios</strong></li>
-            <li><strong>0.60 primary bag-level consensus accuracy</strong></li>
-            <li><strong>0.60 best primary-case accuracy</strong></li>
-            <li><strong>10-frame window</strong> reduced to <strong>5-frame VLM input</strong></li>
-          </ul>
-        </div>
-        <div class="result-block">
-          <div class="result-label">How to read this</div>
-          <ul class="bullets compact">
-            <li>The benchmark shows richer decisions than a binary controller could express.</li>
-            <li>It does not show reliable enough perception to justify raw online VLM control.</li>
-            <li>Unsafe-forward behavior and inconsistent activation remained the main bottlenecks.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <article class="card">
-          <h3>Primary Metrics</h3>
-          <div class="metric-row">
-            <span>Primary Bag-Level Consensus Accuracy</span>
-            <span class="mono">0.60</span>
-          </div>
-          <div class="metric-row">
-            <span>Best Primary-Case Accuracy</span>
-            <span class="mono">0.60</span>
-          </div>
-          <div class="metric-row">
-            <span>Review Bags Without Review Consensus</span>
-            <span class="mono">1 / 3</span>
-          </div>
-          <div class="metric-row">
-            <span>Sequence Window / Max Frames</span>
-            <span class="mono">10 / 5</span>
-          </div>
-          <p class="note">
-            Saved run: <span class="mono">final_policy_v2_crossing</span>.
-          </p>
-        </article>
-
-        <article class="card">
-          <h3>Unsafe-Forward Rates on STOP-Labeled Primary Cases</h3>
-          <div class="metric-row">
-            <span>InternVL Sequence</span>
-            <span class="mono">0.610</span>
-          </div>
-          <div class="metric-row">
-            <span>InternVL Single</span>
-            <span class="mono">0.500</span>
-          </div>
-          <div class="metric-row">
-            <span>Qwen Sequence</span>
-            <span class="mono">0.432</span>
-          </div>
-          <div class="metric-row">
-            <span>Qwen Single</span>
-            <span class="mono">0.335</span>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>Observations</h2>
-        <p>
-          The main value of the run was learning where the new interface helped and where the perception stack still failed to activate reliably.
+          The dashboard above contains the benchmark summary. The points below are the parts that mattered most when interpreting the run.
         </p>
       </div>
 
       <div class="grid-2">
         <article class="card">
-          <h3>What improved</h3>
+          <h3>Where sequence helped</h3>
           <ul class="bullets compact">
             <li>Sequence reasoning helped in the receding-person case where both sequence methods returned <span class="mono">FORWARD</span> correctly.</li>
-            <li>The five-action interface made lateral intent and uncertainty visible instead of collapsing everything into stop/go.</li>
+            <li>The richer action space made lateral intent and uncertainty visible instead of collapsing everything into stop/go.</li>
             <li><span class="mono">REVIEW</span> gave the evaluator a more honest place to put ambiguity.</li>
           </ul>
         </article>
@@ -276,6 +269,36 @@
             <li>Crossing and entering-late cases still failed at the consensus level in several bags.</li>
             <li>Sequence context did not automatically fix ambiguity; sometimes it diluted the person cue that mattered.</li>
             <li>The interface improved faster than perception reliability did under the current sampling regime.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="grid-2 top-gap">
+        <article class="card compact-card">
+          <h3>Diagnostic Signals</h3>
+          <div class="metric-row">
+            <span>Review Bags Without Review Consensus</span>
+            <span class="mono">1 / 3</span>
+          </div>
+          <div class="metric-row">
+            <span>InternVL Sequence Unsafe-Forward</span>
+            <span class="mono">0.610</span>
+          </div>
+          <div class="metric-row">
+            <span>Qwen Sequence Unsafe-Forward</span>
+            <span class="mono">0.432</span>
+          </div>
+          <p class="note">
+            Unsafe-forward mattered more than raw accuracy alone because these are the cases most likely to violate a conservative social policy.
+          </p>
+        </article>
+
+        <article class="card compact-card">
+          <h3>Interpretation</h3>
+          <ul class="bullets compact">
+            <li>The result is more useful as a diagnostic signal than as a success metric.</li>
+            <li>Sequence reasoning did not automatically solve ambiguity.</li>
+            <li>The main open problem remained perception consistency and activation on the relevant person or motion cue.</li>
           </ul>
         </article>
       </div>
@@ -313,7 +336,7 @@
           <h3>✔ Safety-Projected Path</h3>
           <ul class="bullets compact">
             <li>Fast controller handles real-time motion and local safety</li>
-            <li>Slower VLM layer provides semantic guidance and review signals</li>
+            <li>Slower VLM layer provides semantic guidance</li>
           </ul>
         </article>
       </div>
@@ -321,7 +344,7 @@
       <div class="callout-card">
         <h3>Why the split matters</h3>
         <p>
-          Raw VLM output is too slow and too unconstrained to trust as low-level control. The more defensible use is a slower semantic layer whose outputs are projected through a safety boundary before anything executable is considered.
+          VLM latency and missing geometric guarantees make raw low-level control a poor fit. The more defensible use is a slower semantic layer whose outputs are projected through a safety boundary before anything executable is considered.
         </p>
       </div>
     </section>
@@ -330,7 +353,7 @@
       <div class="section-head">
         <h2>Technical Notes</h2>
         <p>
-          The detailed failure cases, experiment tables, and deployment notes are kept in the supporting documentation.
+          The detailed experiment tables and longer writeups are kept in the supporting notes rather than on the main study page.
         </p>
       </div>
 
@@ -338,10 +361,10 @@
         <article class="card compact-card">
           <h3>Supporting notes</h3>
           <div class="link-column">
-            <a class="text-link" href="docs_note/vlm_social_navigation.md">VLM study summary →</a>
-            <a class="text-link" href="docs_note/experiments.md">Experiments and results →</a>
-            <a class="text-link" href="docs_note/deployment.md">Deployment boundary →</a>
-            <a class="text-link" href="docs_note/model.md">Model notes →</a>
+            <a class="text-link" href="docs_note/vlm_social_navigation.md">Read Details →</a>
+            <a class="text-link" href="docs_note/experiments.md">Read Details →</a>
+            <a class="text-link" href="docs_note/deployment.md">Read Details →</a>
+            <a class="text-link" href="docs_note/model.md">Read Details →</a>
           </div>
         </article>
 
@@ -349,7 +372,7 @@
           <h3>Connection back to Study 1</h3>
           <ul class="bullets compact">
             <li>The VLM layer assumes there is already a motion stack underneath it.</li>
-            <li>What changes here is not the existence of a controller, but the decision representation around people.</li>
+            <li>What changes here is the decision representation around people.</li>
             <li>The earlier reactive signals still matter because the semantic layer does not replace local safety.</li>
           </ul>
           <div class="link-row">

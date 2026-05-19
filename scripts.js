@@ -255,6 +255,150 @@
   if (useYTBtn) useYTBtn.addEventListener("click", renderYT);
 
   // -----------------------------
+  // Overview research map
+  // -----------------------------
+  const overviewTabs = $$('[data-overview-pane]');
+  const overviewPanelBits = {
+    label: $('#overviewPanelLabel'),
+    badge: $('#overviewPanelBadge'),
+    kicker: $('#overviewPanelKicker'),
+    lead: $('#overviewPanelLead'),
+    question: $('#overviewQuestion'),
+    inputs: $('#overviewInputs'),
+    outputs: $('#overviewOutputs'),
+    reality: $('#overviewReality'),
+    tags: $('#overviewTags'),
+    terminal: $('#overviewTerminal'),
+    link: $('#overviewLink')
+  };
+
+  const overviewCopy = {
+    motion: {
+      label: 'IMITATION LEARNING NAVIGATION',
+      badge: 'STUDY 1',
+      kicker: 'Motion Layer',
+      lead: 'The earlier study focuses on real-time learned motion behavior on Go1.',
+      question: 'How does Go1 learn to move?',
+      inputs: 'Front-camera imagery and demonstration data',
+      outputs: 'Real-time motion behavior',
+      reality: 'Deployed controller on Go1',
+      tags: ['Traversability', 'Obstacle Risk', 'Stability'],
+      terminal: [
+        ['focus', 'low-level motion and reactive safety'],
+        ['question', 'whether a learned controller can run online on the robot'],
+        ['next', 'see how the project changed once people entered the scene']
+      ],
+      linkHref: 'imitation-learning.html',
+      linkText: 'View Study 1 →'
+    },
+    social: {
+      label: 'VLM SOCIAL NAVIGATION',
+      badge: 'STUDY 2',
+      kicker: 'Social Decision Layer',
+      lead: 'The later study treats person-dependent navigation as a semantic decision problem.',
+      question: 'How should Go1 behave around people?',
+      inputs: 'Extracted frame sequences from curated Go1 bags',
+      outputs: 'STOP / FORWARD / LEFT / RIGHT / REVIEW',
+      reality: 'Offline benchmark on 13 curated bags',
+      tags: ['13 Bags', '0.60 Consensus', '10 / 5 Sequence Setting'],
+      terminal: [
+        ['focus', 'decision labels for crossings, yielding, and ambiguity'],
+        ['evidence', 'primary bag-level consensus accuracy 0.60 in the saved run'],
+        ['boundary', 'high-level study, not raw online VLM control']
+      ],
+      linkHref: 'vlm-social-navigation.html',
+      linkText: 'View Study 2 →'
+    },
+    boundary: {
+      label: 'FAST CONTROLLER + SLOWER SEMANTIC LAYER',
+      badge: 'SYSTEM VIEW',
+      kicker: 'System Boundary',
+      lead: 'The two studies connect through a split architecture rather than one end-to-end policy.',
+      question: 'How do the two studies connect?',
+      inputs: 'Reactive controller plus semantic decision hints',
+      outputs: 'Safety-projected high-level guidance',
+      reality: 'Fast motion below, slower reasoning above',
+      tags: ['Safety Projection', 'Advisory Layer', 'Local Safety'],
+      terminal: [
+        ['fast loop', 'motion execution and local safety stay with the controller'],
+        ['slow loop', 'the VLM layer contributes semantic guidance'],
+        ['boundary', 'raw high-level output does not directly drive motors']
+      ],
+      linkHref: 'vlm-social-navigation.html#deployment',
+      linkText: 'Read Details →'
+    }
+  };
+
+  const setOverviewPane = (pane) => {
+    const cfg = overviewCopy[pane];
+    if (!cfg || !overviewPanelBits.label) return;
+
+    overviewTabs.forEach((btn) => {
+      const active = btn.getAttribute('data-overview-pane') === pane;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    overviewPanelBits.label.textContent = cfg.label;
+    overviewPanelBits.badge.textContent = cfg.badge;
+    overviewPanelBits.kicker.textContent = cfg.kicker;
+    overviewPanelBits.lead.textContent = cfg.lead;
+    overviewPanelBits.question.textContent = cfg.question;
+    overviewPanelBits.inputs.textContent = cfg.inputs;
+    overviewPanelBits.outputs.textContent = cfg.outputs;
+    overviewPanelBits.reality.textContent = cfg.reality;
+    overviewPanelBits.tags.innerHTML = cfg.tags.map((tag) => `<span class="tag">${tag}</span>`).join('');
+    overviewPanelBits.terminal.innerHTML = cfg.terminal.map(([k,v]) => `<div class="terminal-line"><span class="k">${k}</span> ${v}</div>`).join('');
+    overviewPanelBits.link.setAttribute('href', cfg.linkHref);
+    overviewPanelBits.link.textContent = cfg.linkText;
+  };
+
+  if (overviewTabs.length && overviewPanelBits.label) {
+    overviewTabs.forEach((btn) => {
+      btn.addEventListener('click', () => setOverviewPane(btn.getAttribute('data-overview-pane')));
+    });
+    const initialPane = overviewTabs.find((btn) => btn.classList.contains('active'))?.getAttribute('data-overview-pane') || 'motion';
+    setOverviewPane(initialPane);
+  }
+
+  // -----------------------------
+  // VLM action-space explainer
+  // -----------------------------
+  const socialButtons = $$('[data-social-action]');
+  const decisionExplainer = $('#decisionExplainer');
+
+  const socialActionCopy = {
+    STOP: 'Yield or pause when a person is directly ahead or approaching.',
+    FORWARD: 'Continue when the path is socially clear.',
+    LEFT: 'High-level side preference toward the left, not a raw motor command.',
+    RIGHT: 'High-level side preference toward the right, not a raw motor command.',
+    REVIEW: 'Uncertainty fallback when the scene is ambiguous.'
+  };
+
+  const setSocialAction = (action) => {
+    socialButtons.forEach((btn) => {
+      const active = btn.getAttribute('data-social-action') === action;
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    if (decisionExplainer) {
+      decisionExplainer.innerHTML = `
+        <div class="decision-explainer-title">${action}</div>
+        <p>${socialActionCopy[action] || ''}</p>
+      `;
+    }
+  };
+
+  if (socialButtons.length && decisionExplainer) {
+    socialButtons.forEach((btn) => {
+      btn.addEventListener('click', () => setSocialAction(btn.getAttribute('data-social-action')));
+    });
+    const initial = socialButtons.find((btn) => btn.classList.contains('active'))?.getAttribute('data-social-action') || 'STOP';
+    setSocialAction(initial);
+  }
+
+  // -----------------------------
   // Optional: highlight nav link on scroll (lightweight)
   // -----------------------------
   const sections = ["overview", "timeline", "results", "deployment", "media"]
