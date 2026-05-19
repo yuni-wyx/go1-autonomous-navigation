@@ -59,8 +59,8 @@ The more careful system view is:
 
 ## Related pages
 
-- [Go1 overview](../index.html)
-- [Study 2 page](../vlm-social-navigation.html)
-- [Experiments and results](experiments.md)
-- [Deployment notes](deployment.md)
-- [Model notes](model.md)
+- [Go1 overview](index.html)
+- [Study 2 page](vlm-social-navigation.html)
+- [Experiments and results](note-view.html?doc=docs_note/experiments.md&title=Benchmark%20Setup%20and%20Results&subtitle=Offline%20VLM%20evaluation%20notes&summary=This%20note%20summarizes%20the%20saved%20benchmark,%20core%20metrics,%20and%20failure%20cases%20from%20the%20VLM%20study.&parent=VLM%20Social%20Navigation&parentHref=vlm-social-navigation.html&focus=benchmark-setup)
+- [Deployment notes](note-view.html?doc=docs_note/deployment.md&title=Deployment%20Boundary&subtitle=Real-time%20control%20versus%20offline%20VLM%20evaluation&summary=This%20note%20explains%20why%20the%20VLM%20layer%20stayed%20offline%20and%20how%20safety%20projection%20fits%20the%20system%20view.&parent=VLM%20Social%20Navigation&parentHref=vlm-social-navigation.html&focus=what-the-vlm-capstone-proposes)
+- [Model notes](note-view.html?doc=docs_note/model.md&title=Decision%20Policy%20Design&subtitle=Pretrained%20VLM%20reasoning%20module&summary=This%20note%20covers%20the%20pretrained%20VLM%20choices,%20decision%20representation,%20and%20why%20the%20model%20was%20used%20as%20a%20semantic%20module.&parent=VLM%20Social%20Navigation&parentHref=vlm-social-navigation.html&focus=vlm-social-navigation-model)

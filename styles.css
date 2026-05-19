@@ -562,6 +562,7 @@ main{ max-width: 1100px; margin: 0 auto; padding: 22px 18px 56px; }
   .grid-3{ grid-template-columns: 1fr; }
   .grid-2{ grid-template-columns: 1fr; }
   .notes-grid{ grid-template-columns: 1fr; }
+  .related-notes-grid{ grid-template-columns: 1fr; }
   .phase-strip{ grid-template-columns: 1fr; }
   .phase-arrow{ display:none; }
   .result-highlight{ grid-template-columns: 1fr; }
@@ -870,6 +871,24 @@ main{ max-width: 1100px; margin: 0 auto; padding: 22px 18px 56px; }
 
 .note-link-card p{
   margin: 0 0 10px;
+}
+
+.note-file{
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.46);
+}
+
+.related-notes-frame{
+  padding: 18px;
+}
+
+.related-notes-grid{
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.notebook-callout .link-row{
+  margin-top: 10px;
 }
 
 .breadcrumbs{

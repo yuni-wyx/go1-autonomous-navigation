@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research Notebook | Go1</title>
+  <meta name="description" content="Technical notes behind the Go1 navigation studies." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/favicon.png">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-dot"></span>
+      <span>GO1 // CAIRO LAB</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html">Overview</a>
+      <a href="imitation-learning.html">Imitation Learning</a>
+      <a href="vlm-social-navigation.html">VLM Social Navigation</a>
+      <a href="research-notebook.html">Research Notebook</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main id="top">
+    <section class="hero hero-single note-hero">
+      <div class="hero-left hero-full">
+        <div class="chip">
+          <span class="chip-pulse"></span>
+          shared archive
+        </div>
+
+        <h1 class="title">Research Notebook</h1>
+        <p class="hero-lead">Technical notes behind the Go1 navigation studies.</p>
+        <p class="hero-detail">
+          This page collects the supporting notes as one shared archive. The markdown files stay as the source of truth, while each note opens through the site note viewer rather than as a raw document.
+        </p>
+
+        <div class="cta-row">
+          <a class="btn primary" href="note-view.html?doc=docs_note/imitation_learning.md&title=Imitation%20Learning%20Overview&subtitle=Earlier%20Go1%20navigation%20study&summary=This%20note%20summarizes%20the%20earlier%20imitation-learning%20navigation%20phase%20and%20its%20limits.&parent=Research%20Notebook&parentHref=research-notebook.html">Open First Note</a>
+          <a class="btn ghost" href="index.html">Back to Overview</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Phase 1 — Motion Learning</h2>
+        <p>
+          Notes from the imitation-learning navigation study: learning motion behavior, telemetry signals, and real-time deployment boundaries.
+        </p>
+      </div>
+
+      <div class="notebook-frame card">
+        <div class="notes-grid notebook-grid">
+          <article class="card note-link-card">
+            <h4>Imitation Learning Overview</h4>
+            <p>Study scope, what the earlier controller achieved, and what it could not represent.</p>
+            <div class="note-file">docs_note/imitation_learning.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/imitation_learning.md&title=Imitation%20Learning%20Overview&subtitle=Earlier%20Go1%20navigation%20study&summary=This%20note%20summarizes%20the%20earlier%20imitation-learning%20navigation%20phase%20and%20its%20limits.&parent=Research%20Notebook&parentHref=research-notebook.html">Open note →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Model &amp; Pipeline</h4>
+            <p>ResNet backbone, temporal context, and deployment-oriented motion-stack choices.</p>
+            <div class="note-file">docs_note/model.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/model.md&title=Model%20%26%20Pipeline&subtitle=ResNet%2C%20GRU%2C%20and%20motion%20prediction&summary=This%20note%20covers%20the%20model-family%20choices%20behind%20the%20earlier%20learned%20navigation%20stack.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=imitation-learning-model">Open note →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Data &amp; Telemetry</h4>
+            <p>ROS bags, demonstrations, and low-level supervision used in the motion study.</p>
+            <div class="note-file">docs_note/data.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/data.md&title=Data%20%26%20Telemetry&subtitle=ROS%20bags%2C%20demonstrations%2C%20and%20telemetry&summary=This%20note%20covers%20the%20data%20side%20of%20the%20earlier%20Go1%20imitation-learning%20pipeline.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=imitation-learning-data">Open note →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Experiments &amp; Evaluation</h4>
+            <p>Phase 1 evaluation context and the questions that pushed the project toward social decisions.</p>
+            <div class="note-file">docs_note/experiments.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/experiments.md&title=Experiments%20%26%20Evaluation&subtitle=Phase%201%20context%20and%20evaluation%20questions&summary=This%20note%20captures%20the%20phase%20transition%20through%20evaluation%20questions%20and%20later%20benchmark%20interpretation.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=phase-1-context">Open note →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Deployment Notes</h4>
+            <p>Real-time boundary notes for what actually ran on Go1 in the earlier controller stack.</p>
+            <div class="note-file">docs_note/deployment.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/deployment.md&title=Deployment%20Notes&subtitle=Real-time%20Go1%20controller%20boundary&summary=This%20note%20separates%20what%20was%20actually%20deployed%20on%20Go1%20from%20what%20came%20later%20as%20offline%20VLM%20work.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=what-was-actually-deployed">Open note →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Phase 2 — Social Navigation</h2>
+        <p>
+          Notes from the VLM-based social-navigation study: decision labels, benchmark design, observations, and deployment boundary.
+        </p>
+      </div>
+
+      <div class="notebook-frame card">
+        <div class="notes-grid notebook-grid">
+          <article class="card note-link-card">
+            <h4>VLM Social Navigation Overview</h4>
+            <p>Study scope, benchmark framing, and the main deployment boundary for the later phase.</p>
+            <div class="note-file">docs_note/vlm_social_navigation.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/vlm_social_navigation.md&title=VLM%20Social%20Navigation%20Overview&subtitle=Offline%20VLM%20decision%20study&summary=This%20note%20summarizes%20the%20later%20Go1%20social-navigation%20study%20and%20its%20main%20boundaries.&parent=Research%20Notebook&parentHref=research-notebook.html">Open note →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Decision Representation</h4>
+            <p>Five-label action space, prompt-policy structure, and semantic decision framing.</p>
+            <div class="note-file">docs_note/model.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/model.md&title=Decision%20Representation&subtitle=Prompt-policy%20layer%20and%20action%20design&summary=This%20note%20covers%20the%20model-facing%20design%20choices%20behind%20the%20VLM%20social-navigation%20study.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=vlm-social-navigation-model">Open note →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Benchmark Design</h4>
+            <p>Curated bags, sequence windows, and the saved-run evaluation setup.</p>
+            <div class="note-file">docs_note/experiments.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/experiments.md&title=Benchmark%20Design&subtitle=Metrics%2C%20saved%20run%2C%20and%20failure%20modes&summary=This%20note%20covers%20the%20saved%20benchmark%20configuration%20and%20how%20the%20results%20were%20interpreted.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=benchmark-setup">Open note →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Observations</h4>
+            <p>Where sequence helped, where activation failed, and why uncertainty still mattered.</p>
+            <div class="note-file">docs_note/experiments.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/experiments.md&title=Observations&subtitle=Saved-run%20observations%20and%20failure%20modes&summary=This%20note%20focuses%20on%20the%20main%20observations%20from%20the%20VLM%20social-navigation%20benchmark.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=failure-cases-and-interpretation">Open note →</a>
+          </article>
+          <article class="card note-link-card">
+            <h4>Deployment Boundary</h4>
+            <p>Why the VLM stayed advisory and how safety projection fits the shared system view.</p>
+            <div class="note-file">docs_note/deployment.md</div>
+            <a class="text-link" href="note-view.html?doc=docs_note/deployment.md&title=Deployment%20Boundary&subtitle=Real-time%20vs.%20offline%20separation&summary=This%20note%20separates%20the%20offline%20VLM%20study%20from%20the%20earlier%20real-time%20controller%20deployment.&parent=Research%20Notebook&parentHref=research-notebook.html&focus=what-the-vlm-capstone-proposes">Open note →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span class="mono">©</span> <span id="year"></span> GO1 / CAIRO LAB — Built by Yuni Wu
+      </div>
+      <div class="footer-right">
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

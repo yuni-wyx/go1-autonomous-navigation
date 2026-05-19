@@ -60,8 +60,8 @@ That is what motivated the later VLM-based social-navigation study.
 
 ## Related pages
 
-- [Go1 overview](../index.html)
-- [Study 1 page](../imitation-learning.html)
-- [Model notes](model.md)
-- [Data notes](data.md)
-- [Deployment notes](deployment.md)
+- [Go1 overview](index.html)
+- [Study 1 page](imitation-learning.html)
+- [Model notes](note-view.html?doc=docs_note/model.md&title=Model%20Architecture&subtitle=Imitation-learning%20model%20notes&summary=This%20note%20covers%20the%20visual%20backbone,%20temporal%20context,%20and%20deployment-oriented%20model%20choices.&parent=Imitation%20Learning&parentHref=imitation-learning.html&focus=imitation-learning-model)
+- [Data notes](note-view.html?doc=docs_note/data.md&title=Training%20and%20Data&subtitle=Demonstrations,%20telemetry,%20and%20benchmark%20inputs&summary=This%20note%20describes%20the%20ROS%20bag,%20demonstration,%20and%20telemetry%20data%20used%20across%20the%20Go1%20studies.&parent=Imitation%20Learning&parentHref=imitation-learning.html&focus=imitation-learning-data)
+- [Deployment notes](note-view.html?doc=docs_note/deployment.md&title=Deployment%20Boundary&subtitle=What%20ran%20on%20Go1%20and%20what%20did%20not&summary=This%20note%20separates%20the%20earlier%20real-time%20Go1%20deployment%20from%20the%20later%20offline%20VLM%20benchmark.&parent=Imitation%20Learning&parentHref=imitation-learning.html&focus=what-was-actually-deployed)
