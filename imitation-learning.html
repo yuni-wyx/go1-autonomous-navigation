@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Imitation Learning Navigation | Go1</title>
+  <meta name="description" content="Study 1 of the Go1 research portfolio: imitation-learning navigation and real-time robot deployment." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/favicon.png">
+</head>
+
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-dot"></span>
+      <span>GO1 // CAIRO LAB</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html">Overview</a>
+      <a href="imitation-learning.html">Imitation Learning</a>
+      <a href="vlm-social-navigation.html">VLM Social Navigation</a>
+      <a href="vlm-social-navigation.html#results">Results</a>
+      <a href="vlm-social-navigation.html#deployment">Deployment Boundary</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-left">
+        <div class="chip">
+          <span class="chip-pulse"></span>
+          Study 1 • low-level navigation and deployment
+        </div>
+
+        <h1 class="title">
+          Imitation Learning Navigation
+        </h1>
+
+        <p class="hero-lead">
+          Learning motion from demonstrations.
+        </p>
+
+        <p class="hero-detail">
+          <strong>Research question:</strong> can a quadruped robot learn useful navigation behavior from demonstration data instead of relying entirely on hand-designed rules? This study focuses on low-level motion behavior: moving forward, slowing or stopping, reacting to obstacles, and staying stable enough to use on hardware.
+        </p>
+
+        <div class="cta-row">
+          <a class="btn primary" href="#system">System Design</a>
+          <a class="btn ghost" href="vlm-social-navigation.html">See the next study</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-num" data-count="3">0</div>
+            <div class="stat-label">Core Reactive Signals</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" data-count="1">0</div>
+            <div class="stat-label">Robot Deployment Study</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" data-count="1">0</div>
+            <div class="stat-label">Real-Time Controller Path</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="holo-card">
+          <div class="holo-header">
+            <span>PHASE 1 TELEMETRY</span>
+            <span class="badge">GO1</span>
+          </div>
+
+          <div class="holo-body">
+            <div class="panel-kicker">Phase 1: Real-Time Reactive Navigation Metrics</div>
+            <p class="panel-note">
+              These metrics describe whether the robot is moving safely and reliably enough to use. They mattered in the earlier navigation system, but they were never the whole story once people entered the scene.
+            </p>
+
+            <div class="meter">
+              <div class="meter-top">
+                <span>Traversability</span>
+                <span id="m1v">72%</span>
+              </div>
+              <div class="bar"><div class="bar-fill" id="m1"></div></div>
+            </div>
+
+            <div class="meter">
+              <div class="meter-top">
+                <span>Obstacle Risk</span>
+                <span id="m2v">18%</span>
+              </div>
+              <div class="bar"><div class="bar-fill warn" id="m2"></div></div>
+            </div>
+
+            <div class="meter">
+              <div class="meter-top">
+                <span>Stability</span>
+                <span id="m3v">88%</span>
+              </div>
+              <div class="bar"><div class="bar-fill" id="m3"></div></div>
+            </div>
+
+            <div class="terminal">
+              <div class="terminal-line"><span class="k">signals</span> reactive motion and safety cues</div>
+              <div class="terminal-line"><span class="k">runtime</span> smoothing, clipping, and conservative overrides</div>
+              <div class="terminal-line"><span class="k">limit</span> little explicit representation of human intent</div>
+              <div class="terminal-line dim" id="terminalBlink">_</div>
+            </div>
+          </div>
+
+          <div class="holo-glow" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="motivation" class="section">
+      <div class="section-head">
+        <h2>Research Motivation</h2>
+        <p>
+          The earlier problem was mostly about whether a learned navigation pipeline could actually run on the robot without becoming unstable or unusable.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>What made this hard</h3>
+          <ul class="bullets compact">
+            <li>Manual navigation rules are difficult to tune across different spaces and lighting conditions.</li>
+            <li>Real robots have latency, sensing noise, and imperfect control response.</li>
+            <li>A model that looks reasonable offline can still fail if the online loop is too noisy or too abrupt.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Why imitation learning</h3>
+          <ul class="bullets compact">
+            <li>Teleoperated demonstrations provide motion examples directly from the robot's own sensing context.</li>
+            <li>The learned policy can absorb corridor following, turning, and stop/go behavior without hand-writing every decision rule.</li>
+            <li>The practical question was not only model accuracy. It was whether the whole loop could stay responsive and stable on Go1.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="system" class="section">
+      <div class="section-head">
+        <h2>System Design</h2>
+        <p>
+          This phase centers on a compact visual policy that could be integrated into a ROS runtime and kept light enough for real-time use.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card compact-card">
+          <h3>Data and Runtime</h3>
+          <ul class="bullets compact">
+            <li>Go1 teleoperation and rosbag recording</li>
+            <li>Front-camera imagery aligned with motion-command supervision</li>
+            <li>ROS pipeline for online inference on the robot</li>
+          </ul>
+        </article>
+
+        <article class="card compact-card">
+          <h3>Model Family</h3>
+          <ul class="bullets compact">
+            <li><span class="mono">ResNet-18</span> visual backbone</li>
+            <li>Short temporal history or GRU-style context where useful</li>
+            <li>Velocity-style outputs and stop-gate style filtering where supported</li>
+          </ul>
+        </article>
+
+        <article class="card compact-card">
+          <h3>Deployment Constraints</h3>
+          <ul class="bullets compact">
+            <li>Inference had to remain lightweight enough for online use.</li>
+            <li>Smoothing and clipping mattered because raw predictions are not automatically usable on hardware.</li>
+            <li>The controller had to be conservative enough to stay stable under noise and timing variation.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="signals" class="section">
+      <div class="section-head">
+        <h2>Metrics and Signals</h2>
+        <p>
+          Traversability, obstacle risk, and stability should be read as low-level motion and safety signals from the earlier navigation system, not as a complete account of navigation.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>What these signals were good for</h3>
+          <ul class="bullets compact">
+            <li><strong>Traversability:</strong> whether local space looked passable enough to keep moving.</li>
+            <li><strong>Obstacle risk:</strong> whether the current path looked likely to require slowing or stopping.</li>
+            <li><strong>Stability:</strong> whether the control loop stayed usable enough for real robot motion.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>What they did not say</h3>
+          <ul class="bullets compact">
+            <li>They do not explain whether a person is crossing, receding, or entering the frame late.</li>
+            <li>They do not provide a direct way to represent yielding left, yielding right, or deferring under uncertainty.</li>
+            <li>That gap became the main reason the project eventually needed a second study.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>What This Phase Achieved</h2>
+        <p>
+          The contribution of this phase was not that it solved all navigation. It established a real-time learned pipeline and clarified which parts of the problem were truly about deployment.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>What worked</h3>
+          <ul class="bullets compact">
+            <li>A learned visual controller could be integrated into a real-time Go1 stack.</li>
+            <li>The project exposed the importance of runtime smoothing, clipping, and conservative post-processing.</li>
+            <li>It made low-level movement and reactive safety a concrete engineering problem rather than only a training problem.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Limitations</h3>
+          <ul class="bullets compact">
+            <li>The behavior remained mostly reactive.</li>
+            <li>Humans were not represented as explicit social agents.</li>
+            <li>The controller did not reason directly about crossing direction, yielding behavior, or ambiguity.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="callout-card">
+        <h3>Why this led to the next study</h3>
+        <p>
+          The limitation of this phase was not only control. It was representation. The robot could learn motion patterns, but it still lacked a way to express social navigation decisions around people.
+        </p>
+      </div>
+    </section>
+
+    <section id="media" class="section">
+      <div class="section-head">
+        <h2>Earlier Robot Demo</h2>
+        <p>
+          This media belongs to the earlier real-time navigation study. The VLM work that followed is represented mainly by offline evaluation rather than a comparable online demo.
+        </p>
+      </div>
+
+      <div class="media-card">
+        <div class="media-top">
+          <div class="media-title">
+            <span class="pulse-dot"></span>
+            <span>Go1 Walking Demo</span>
+          </div>
+
+          <div class="media-actions">
+            <button class="btn small ghost" id="useLocal">Use local mp4</button>
+            <button class="btn small ghost" id="useYT">Use YouTube</button>
+          </div>
+        </div>
+
+        <div class="media-body" id="mediaBody"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Technical Notes</h2>
+        <p>
+          Deeper model, data, and deployment notes are kept in the documentation pages rather than expanding this study page into a full report.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card compact-card">
+          <h3>Supporting notes</h3>
+          <div class="link-column">
+            <a class="text-link" href="docs_note/imitation_learning.md">Imitation learning summary →</a>
+            <a class="text-link" href="docs_note/model.md">Model notes →</a>
+            <a class="text-link" href="docs_note/data.md">Data notes →</a>
+            <a class="text-link" href="docs_note/deployment.md">Deployment boundary →</a>
+          </div>
+        </article>
+
+        <article class="card compact-card">
+          <h3>Connection to Study 2</h3>
+          <ul class="bullets compact">
+            <li>The next study keeps the fast low-level controller as the motion layer.</li>
+            <li>What changes is the decision interface for person-dependent scenes.</li>
+            <li>The handoff happens through a slower, safety-projected semantic layer.</li>
+          </ul>
+          <div class="link-row">
+            <a class="text-link" href="vlm-social-navigation.html">Open VLM study →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span class="mono">©</span> <span id="year"></span> GO1 / CAIRO LAB — Built by Yuni Wu
+      </div>
+      <div class="footer-right">
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

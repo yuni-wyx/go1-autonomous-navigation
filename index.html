@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Go1 | Robotics</title>
-  <meta name="description" content="Unitree Go1 research portfolio — from imitation learning to VLM-based social decision making." />
+  <title>Go1 Autonomous Navigation Research</title>
+  <meta name="description" content="Go1 research portfolio covering imitation-learning navigation and VLM-based social-navigation decisions." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,17 +20,17 @@
   <div class="bg-grid" aria-hidden="true"></div>
 
   <header class="nav">
-    <a class="brand" href="#top">
+    <a class="brand" href="index.html">
       <span class="brand-dot"></span>
       <span>GO1 // CAIRO LAB</span>
     </a>
 
     <nav class="nav-links" aria-label="Primary">
-      <a href="#overview">Overview</a>
-      <a href="#timeline">Timeline</a>
-      <a href="#results">Results</a>
-      <a href="#deployment">Deployment</a>
-      <a href="#media">Media</a>
+      <a href="index.html">Overview</a>
+      <a href="imitation-learning.html">Imitation Learning</a>
+      <a href="vlm-social-navigation.html">VLM Social Navigation</a>
+      <a href="vlm-social-navigation.html#results">Results</a>
+      <a href="vlm-social-navigation.html#deployment">Deployment Boundary</a>
     </nav>
 
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
@@ -39,37 +39,34 @@
   </header>
 
   <main id="top">
-    <section class="hero">
-      <div class="hero-left">
+    <section class="hero hero-single">
+      <div class="hero-left hero-full">
         <div class="chip">
           <span class="chip-pulse"></span>
-          Robotics • ROS • Imitation Learning • VLM Social Navigation
+          Go1 research portfolio • two related studies
         </div>
 
         <h1 class="title">
-          Go1 Autonomous Navigation:<br />
-          <span class="neon">From Imitation Learning to Social Navigation Decisions</span>
+          Go1 Autonomous Navigation Research
         </h1>
 
         <p class="hero-lead">
-          A Go1 navigation stack that started with real-time learned control and later added an offline VLM decision layer for social scenes.
+          From learning motion through imitation to studying social navigation decisions with VLMs.
         </p>
 
-        <p class="subtitle">
-          <strong>Phase 1:</strong> a real-time imitation-learning controller that actually ran on Go1.<br />
-          <strong>Phase 2:</strong> an offline VLM benchmark for social scenes and decision labels.<br />
-          <strong>Final system view:</strong> fast low-level control plus a slower, safety-projected VLM layer.
+        <p class="hero-detail">
+          This site documents two related Go1 navigation studies. The first asks whether Go1 can learn real-time navigation behavior from demonstration data. The second asks how a robot that can already move should make higher-level decisions around people.
         </p>
 
         <div class="cta-row">
-          <a class="btn primary" href="#timeline">See Research Progression</a>
-          <a class="btn ghost" href="#results">View Key Results</a>
+          <a class="btn primary" href="imitation-learning.html">Study 1: Imitation Learning</a>
+          <a class="btn ghost" href="vlm-social-navigation.html">Study 2: VLM Social Navigation</a>
         </div>
 
         <div class="stats">
           <div class="stat">
             <div class="stat-num" data-count="2">0</div>
-            <div class="stat-label">Project Phases</div>
+            <div class="stat-label">Related Studies</div>
           </div>
           <div class="stat">
             <div class="stat-num" data-count="13">0</div>
@@ -77,174 +74,102 @@
           </div>
           <div class="stat">
             <div class="stat-num" data-count="5">0</div>
-            <div class="stat-label">VLM Action Classes</div>
+            <div class="stat-label">VLM Decision Labels</div>
           </div>
-        </div>
-      </div>
-
-      <div class="hero-right">
-        <div class="holo-card">
-          <div class="holo-header">
-            <span>PHASE 1 TELEMETRY</span>
-            <span class="badge">GO1</span>
-          </div>
-
-          <div class="holo-body">
-            <div class="panel-kicker">Phase 1: Real-Time Reactive Navigation Metrics</div>
-            <p class="panel-note">
-              These are the kinds of low-level signals that matter when the controller is trying to keep the robot moving and stable in real time. They are useful, but they do not tell the robot whether a person is receding, crossing, or simply ambiguous.
-            </p>
-
-            <div class="meter">
-              <div class="meter-top">
-                <span>Traversability</span>
-                <span id="m1v">72%</span>
-              </div>
-              <div class="bar"><div class="bar-fill" id="m1"></div></div>
-            </div>
-
-            <div class="meter">
-              <div class="meter-top">
-                <span>Obstacle Risk</span>
-                <span id="m2v">18%</span>
-              </div>
-              <div class="bar"><div class="bar-fill warn" id="m2"></div></div>
-            </div>
-
-            <div class="meter">
-              <div class="meter-top">
-                <span>Stability</span>
-                <span id="m3v">88%</span>
-              </div>
-              <div class="bar"><div class="bar-fill" id="m3"></div></div>
-            </div>
-
-            <div class="terminal">
-              <div class="terminal-line"><span class="k">phase_1</span> reactive safety signals for learned low-level control</div>
-              <div class="terminal-line"><span class="k">phase_2</span> slower scene interpretation for people, crossings, and review cases</div>
-              <div class="terminal-line"><span class="k">system</span> low-level controller + safety-projected VLM layer</div>
-              <div class="terminal-line dim" id="terminalBlink">_</div>
-            </div>
-          </div>
-
-          <div class="holo-glow" aria-hidden="true"></div>
         </div>
       </div>
     </section>
 
     <section id="overview" class="section">
       <div class="section-head">
-        <h2>Overview</h2>
+        <h2>Research Map</h2>
         <p>
-          One continuous Go1 research story: first learn to move robustly in real time, then learn to interpret human scenes more semantically and safely.
+          The project works better as two studies with one connection point: first solve movement well enough to deploy, then ask what the robot should do in person-dependent scenes.
         </p>
       </div>
 
       <div class="grid-3">
-        <article class="card">
-          <h3>Phase 1: Learning to Move</h3>
-          <p><strong>What this does:</strong> trains and deploys a real-time imitation-learning controller for low-level Go1 navigation behavior.</p>
+        <article class="card study-card">
+          <div class="phase-kicker">Study 1</div>
+          <h3>Imitation Learning Navigation</h3>
+          <p>Learning motion from demonstrations under real-time constraints.</p>
           <ul class="bullets compact">
-            <li>Uses Go1 rosbag + teleoperation supervision</li>
-            <li>Works with reactive signals such as traversability, obstacle risk, and stability</li>
+            <li>Focus: real-time control, traversability, obstacle risk, stability</li>
+            <li>Question: how does the robot move?</li>
           </ul>
           <div class="tag-row">
-            <span class="tag">ResNet-18</span><span class="tag">GRU / History</span><span class="tag">ROS</span>
+            <span class="tag">ResNet-18</span>
+            <span class="tag">ROS</span>
+            <span class="tag">On-robot runtime</span>
+          </div>
+          <div class="link-row">
+            <a class="text-link" href="imitation-learning.html">Open study page →</a>
+            <a class="text-link" href="docs_note/imitation_learning.md">Notes →</a>
           </div>
         </article>
 
-        <article class="card">
-          <h3>Why Move Beyond Imitation Learning?</h3>
-          <p><strong>Why the earlier setup was not enough:</strong> imitation learning can reproduce observed motion, but it does not make crossing direction, yielding behavior, or uncertainty explicit.</p>
+        <article class="card study-card">
+          <div class="phase-kicker">Study 2</div>
+          <h3>VLM Social Navigation</h3>
+          <p>Studying higher-level social decisions from curated Go1 rosbag scenes.</p>
           <ul class="bullets compact">
-            <li>Binary stop/go is too coarse for crossing and ambiguity</li>
-            <li>The robot needs a clearer semantic reason for yielding or deferring</li>
+            <li>Focus: <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span></li>
+            <li>Question: how should the robot behave around people?</li>
           </ul>
           <div class="tag-row">
-            <span class="tag">Interpretability</span><span class="tag">Human Motion</span><span class="tag">Ambiguity</span>
+            <span class="tag">Qwen3-VL-30B</span>
+            <span class="tag">InternVL-3.5-14B</span>
+            <span class="tag">Offline benchmark</span>
+          </div>
+          <div class="link-row">
+            <a class="text-link" href="vlm-social-navigation.html">Open study page →</a>
+            <a class="text-link" href="docs_note/vlm_social_navigation.md">Notes →</a>
           </div>
         </article>
 
-        <article class="card">
-          <h3>Phase 2: Learning When and How to Yield</h3>
-          <p><strong>Key design choice:</strong> keep the low-level controller separate, and use pretrained VLMs only for slower scene interpretation and decision suggestions.</p>
+        <article class="card study-card">
+          <div class="phase-kicker">System View</div>
+          <h3>Fast Controller + Slower Semantic Layer</h3>
+          <p>The two studies connect through a split system view rather than a single end-to-end policy.</p>
           <ul class="bullets compact">
-            <li>Offline benchmark over curated Go1 rosbag scenarios</li>
-            <li>Action space: <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span></li>
+            <li>Fast controller handles motion and local safety</li>
+            <li>Slower VLM layer supplies semantic guidance through safety projection</li>
           </ul>
           <div class="tag-row">
-            <span class="tag">Qwen3-VL-30B</span><span class="tag">InternVL-3.5-14B</span><span class="tag">Offline Benchmark</span>
+            <span class="tag">Safety projection</span>
+            <span class="tag">Advisory decisions</span>
+          </div>
+          <div class="link-row">
+            <a class="text-link" href="vlm-social-navigation.html#deployment">Deployment boundary →</a>
           </div>
         </article>
       </div>
     </section>
 
-    <section id="timeline" class="section">
+    <section class="section">
       <div class="section-head">
-        <h2>Timeline</h2>
+        <h2>Why Two Studies</h2>
         <p>
-          The fastest way to understand the project is as a three-step progression.
+          The second study did not replace the first one. It grew out of a limitation in what the first system could represent.
         </p>
       </div>
 
-      <div class="phase-strip">
-        <article class="phase-card">
-          <div class="phase-kicker">Phase 1</div>
-          <h3>Learning to Move</h3>
-          <p class="phase-goal">Goal: deploy a compact learned controller on Go1 for real-time reactive navigation.</p>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Why start with motion?</h3>
           <ul class="bullets compact">
-            <li>Reactive intelligence built around traversability, obstacle risk, and stability</li>
-            <li>Imitation-learning pipeline optimized for low latency and stable on-robot execution</li>
+            <li>A robot first needs a motion pipeline that can run online without becoming unstable.</li>
+            <li>That earlier work focused on learned low-level behavior, smoothing, safety signals, and deployment on Go1.</li>
+            <li>Signals such as traversability, obstacle risk, and stability are still important because they describe whether the robot is moving safely enough to be usable.</li>
           </ul>
         </article>
 
-        <div class="phase-arrow" aria-hidden="true">→</div>
-
-        <article class="phase-card">
-          <div class="phase-kicker">Phase 2</div>
-          <h3>Learning When and How to Yield</h3>
-          <p class="phase-goal">Goal: add semantic social reasoning for people, crossings, yielding, and review cases.</p>
+        <article class="card">
+          <h3>Why add a second study?</h3>
           <ul class="bullets compact">
-            <li>Human-aware navigation with pretrained VLMs over curated Go1 scenarios</li>
-            <li>Structured actions: <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span></li>
-          </ul>
-        </article>
-
-        <div class="phase-arrow" aria-hidden="true">→</div>
-
-        <article class="phase-card highlight">
-          <div class="phase-kicker">Final System</div>
-          <h3>Fast Controller + Slow Semantic Reasoner</h3>
-          <p class="phase-goal">Goal: keep the fast controller for execution, and add a slower layer for cases where human motion changes the meaning of the scene.</p>
-          <ul class="bullets compact">
-            <li>Fast controller remains responsible for real-time safety and motion</li>
-            <li>VLM layer provides slower advisory social decisions and review signals</li>
-          </ul>
-        </article>
-      </div>
-
-      <div class="grid-3 quick-summary">
-        <article class="card compact-card">
-          <h3>What changed in Phase 1</h3>
-          <ul class="bullets compact">
-            <li>Robot-side runtime stability became the main constraint.</li>
-            <li>Smoothing, clipping, and latency mattered as much as model quality.</li>
-          </ul>
-        </article>
-
-        <article class="card compact-card">
-          <h3>What broke the old framing</h3>
-          <ul class="bullets compact">
-            <li>Person-dependent scenes were not well represented by stop/go outputs.</li>
-            <li>Crossings, receding motion, and ambiguity kept collapsing together.</li>
-          </ul>
-        </article>
-
-        <article class="card compact-card">
-          <h3>What Phase 2 changed</h3>
-          <ul class="bullets compact">
-            <li>The action space expanded to <span class="mono">STOP / FORWARD / LEFT / RIGHT / REVIEW</span>.</li>
-            <li>The VLM layer stayed offline-first and advisory rather than executable.</li>
+            <li>Movement alone does not explain what to do when a person is crossing, receding, or hard to interpret.</li>
+            <li>A binary stop/go interface is often too coarse for yielding, side choice, or uncertainty.</li>
+            <li>That is why the later work studies a separate semantic decision layer instead of pretending low-level control solved the whole problem.</li>
           </ul>
         </article>
       </div>
@@ -252,191 +177,39 @@
 
     <section class="section">
       <div class="section-head">
-        <h2>From Geometry to Semantics</h2>
+        <h2>What To Read Next</h2>
         <p>
-          The project evolves by keeping the low-level safety signals, then adding a semantic layer for human-aware decision making.
+          The homepage is only the map. The technical details, observations, and limitations live on the study pages and the supporting notes.
         </p>
       </div>
 
       <div class="grid-2">
-        <article class="card">
-          <h3>Phase 1 Signals</h3>
-          <p><strong>What these signals do:</strong> traversability, obstacle risk, and stability are useful for keeping the robot moving without obvious collisions or unstable behavior.</p>
+        <article class="card compact-card">
+          <h3>Study 1: Imitation Learning Navigation</h3>
           <ul class="bullets compact">
-            <li>Useful for reactive navigation and low-level motion safety</li>
-            <li>Good at answering whether the robot can move through local space</li>
+            <li>Real-time learned controller on Go1</li>
+            <li>Low-level metrics: traversability, obstacle risk, stability</li>
+            <li>What reactive control did and did not capture</li>
           </ul>
-        </article>
-
-        <article class="card">
-          <h3>Why Semantics Was Added</h3>
-          <p><strong>Why they were not enough:</strong> a high obstacle score can tell you something is in front of the robot, but not whether that person is moving away, crossing leftward, or entering too late to infer intent.</p>
-          <ul class="bullets compact">
-            <li>They do not capture crossing direction, yielding behavior, or ambiguity</li>
-            <li>The VLM layer adds semantic interpretation on top of those signals</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <section id="results" class="section">
-      <div class="section-head">
-        <h2>Phase 2: Social Decision Benchmark</h2>
-        <p>
-          Phase 1 answered whether learned perception could run on the robot. Phase 2 asked whether pretrained VLMs could support structured social decisions for human-aware navigation in an offline benchmark.
-        </p>
-      </div>
-
-      <div class="result-highlight">
-        <div class="result-block">
-          <div class="result-label">Key Results</div>
-          <ul class="bullets compact strong-list">
-            <li><strong>13 curated social navigation scenarios</strong></li>
-            <li><strong>0.60 bag-level decision accuracy</strong> on primary scenarios</li>
-            <li><strong>10-frame sequence window</strong> with <strong>5-frame VLM input</strong></li>
-          </ul>
-        </div>
-        <div class="result-block">
-          <div class="result-label">Interpretation</div>
-          <ul class="bullets compact">
-            <li>The five-action interface exposes decisions that a binary stop/go policy cannot represent</li>
-            <li>Crossings and late-entry cases still fail mainly because person activation is unreliable</li>
-            <li>Latency and missing geometric guarantees rule out direct low-level VLM control</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <article class="card">
-          <h3>Phase 2 Benchmark Highlights</h3>
-          <div class="metric-row">
-            <span>Curated Social-Nav Bags</span>
-            <span class="mono">13</span>
+          <div class="link-row">
+            <a class="text-link" href="imitation-learning.html">Study page →</a>
+            <a class="text-link" href="docs_note/model.md">Model notes →</a>
+            <a class="text-link" href="docs_note/data.md">Data notes →</a>
           </div>
-          <div class="metric-row">
-            <span>Primary Bag-Level Consensus Accuracy</span>
-            <span class="mono">0.60</span>
+        </article>
+
+        <article class="card compact-card">
+          <h3>Study 2: VLM Social Navigation</h3>
+          <ul class="bullets compact">
+            <li>Offline benchmark over 13 curated Go1 social-navigation bags</li>
+            <li>Five-label decision interface with explicit uncertainty</li>
+            <li>Why the VLM layer remained advisory rather than executable</li>
+          </ul>
+          <div class="link-row">
+            <a class="text-link" href="vlm-social-navigation.html">Study page →</a>
+            <a class="text-link" href="docs_note/experiments.md">Experiment notes →</a>
+            <a class="text-link" href="docs_note/deployment.md">Deployment notes →</a>
           </div>
-          <div class="metric-row">
-            <span>Best Primary-Case Accuracy</span>
-            <span class="mono">0.60</span>
-          </div>
-          <div class="metric-row">
-            <span>Sequence Window / Max Frames</span>
-            <span class="mono">10 / 5</span>
-          </div>
-          <p class="note">
-            Saved run: <span class="mono">final_policy_v2_crossing</span>. Read this as an offline benchmark, not a deployed controller.
-          </p>
-        </article>
-
-        <article class="card">
-          <h3>What the Benchmark Actually Shows</h3>
-          <ul class="bullets compact">
-            <li><strong>Where it helped:</strong> receding-person cases improved when the model saw short temporal windows instead of one still frame.</li>
-            <li><strong>Where it still failed:</strong> several crossing and entering-late bags still collapsed to unsafe <span class="mono">FORWARD</span> predictions.</li>
-            <li><strong>Why <span class="mono">REVIEW</span> matters:</strong> it gives the evaluator a place to put genuine uncertainty instead of pretending every scene has a confident action.</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <section id="deployment" class="section">
-      <div class="section-head">
-        <h2>Deployment Clarity</h2>
-        <p>
-          The site should make one thing instantly clear: the two phases reached different levels of real-time integration.
-        </p>
-      </div>
-
-      <div class="status-grid">
-        <article class="status-card status-live">
-          <div class="status-title">WHAT WAS ACTUALLY DEPLOYED</div>
-          <h3>✔ Real-Time</h3>
-          <ul class="bullets compact">
-            <li>Imitation-learning controller on Go1</li>
-            <li>On-robot inference with deployment-side smoothing and safety logic</li>
-          </ul>
-        </article>
-
-        <article class="status-card status-test">
-          <div class="status-title">BENCHMARKED</div>
-          <h3>🧪 Offline</h3>
-          <ul class="bullets compact">
-            <li>VLM social-navigation benchmark over curated rosbag scenarios</li>
-            <li>Sequence-based semantic decision evaluation</li>
-          </ul>
-        </article>
-
-        <article class="status-card status-warn">
-          <div class="status-title">NOT DEPLOYED</div>
-          <h3>⚠️ Raw VLM Motion Control</h3>
-          <ul class="bullets compact">
-            <li>Raw VLM output should not directly control Go1</li>
-            <li>Real-time use should stay safety-projected and advisory</li>
-          </ul>
-        </article>
-      </div>
-
-      <div class="callout-card">
-        <h3>Final System Interpretation</h3>
-        <p>
-          <strong>Low-level controller for fast motion and safety. VLM layer for slower scene interpretation and action suggestions.</strong>
-        </p>
-      </div>
-    </section>
-
-    <section id="media" class="section">
-      <div class="section-head">
-        <h2>Media</h2>
-        <p>
-          Demonstration media from the earlier on-robot navigation phase. The VLM capstone is primarily represented by offline benchmark results, prompt-policy analysis, and controller-side safety-projection design.
-        </p>
-      </div>
-
-      <div class="media-card">
-        <div class="media-top">
-          <div class="media-title">
-            <span class="pulse-dot"></span>
-            <span>Go1 Walking Demo</span>
-          </div>
-
-          <div class="media-actions">
-            <button class="btn small ghost" id="useLocal">Use local mp4</button>
-            <button class="btn small ghost" id="useYT">Use YouTube</button>
-          </div>
-        </div>
-
-        <div class="media-body" id="mediaBody">
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>Engineering Takeaways</h2>
-        <p>
-          The most useful outcome of this work was not one final accuracy number. It was learning where each layer helps, where it fails, and what should or should not be trusted in a real robot stack.
-        </p>
-      </div>
-
-      <div class="grid-2">
-        <article class="card">
-          <h3>What changed architecturally</h3>
-          <ul class="bullets compact">
-            <li>The early stack assumed that if the controller output was good enough, the navigation problem was mostly solved.</li>
-            <li>The social-navigation bags broke that assumption because the missing piece was often representation, not only control quality.</li>
-            <li>The final split came from that failure: fast control below, slower interpretation above, with a safety boundary in between.</li>
-          </ul>
-        </article>
-
-        <article class="card">
-          <h3>What the experiments made clear</h3>
-          <ul class="bullets compact">
-            <li>Reactive signals are still necessary, but they leave several person-dependent scenes underspecified.</li>
-            <li>Sequence context helps in some bags, especially receding motion, but the crossing failures show that better temporal wording alone is not enough.</li>
-            <li>Any future online use of the VLM layer would need explicit projection and probably a clearer contract with the lower-level planner.</li>
-          </ul>
         </article>
       </div>
     </section>

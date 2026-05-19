@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VLM Social Navigation | Go1</title>
+  <meta name="description" content="Study 2 of the Go1 research portfolio: offline VLM social-navigation benchmark and deployment boundary." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/favicon.png">
+</head>
+
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-dot"></span>
+      <span>GO1 // CAIRO LAB</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html">Overview</a>
+      <a href="imitation-learning.html">Imitation Learning</a>
+      <a href="vlm-social-navigation.html">VLM Social Navigation</a>
+      <a href="#results">Results</a>
+      <a href="#deployment">Deployment Boundary</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <main id="top">
+    <section class="hero hero-single">
+      <div class="hero-left hero-full">
+        <div class="chip">
+          <span class="chip-pulse"></span>
+          Study 2 • offline social-navigation decision benchmark
+        </div>
+
+        <h1 class="title">
+          VLM Social Navigation
+        </h1>
+
+        <p class="hero-lead">
+          From motion control to human-aware decisions.
+        </p>
+
+        <p class="hero-detail">
+          <strong>Research question:</strong> once the robot can move, how should it decide what to do around people? The answer explored here is an offline decision benchmark using pretrained VLMs, not a fully deployed closed-loop VLM controller.
+        </p>
+
+        <div class="cta-row">
+          <a class="btn primary" href="#benchmark">Benchmark Setup</a>
+          <a class="btn ghost" href="#deployment">Deployment Boundary</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-num" data-count="13">0</div>
+            <div class="stat-label">Curated Social-Nav Bags</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" data-count="0.60">0</div>
+            <div class="stat-label">Primary Consensus Accuracy</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" data-count="5">0</div>
+            <div class="stat-label">Decision Labels</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="motivation" class="section">
+      <div class="section-head">
+        <h2>Research Motivation</h2>
+        <p>
+          The move to VLM evaluation came from a representation bottleneck: binary stop/go behavior was too coarse once the scene depended on people and motion over time.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>Why the earlier interface was too limited</h3>
+          <ul class="bullets compact">
+            <li><span class="mono">STOP</span> and <span class="mono">FORWARD</span> alone cannot express yielding left, yielding right, or deferring under uncertainty.</li>
+            <li>Crossing direction, receding motion, and late-entering people can collapse into the same low-level response.</li>
+            <li>The limitation was not only control quality. It was the lack of a clearer decision representation.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Why use VLMs here</h3>
+          <ul class="bullets compact">
+            <li>Pretrained VLMs may offer a more semantic reading of person-dependent scenes.</li>
+            <li>The project changes the prompt and output interface rather than training a new controller from scratch.</li>
+            <li>The VLM is treated as a slower reasoning module, not as a low-level actuator.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Decision Representation</h2>
+        <p>
+          The action space is deliberately higher level than motor control. These labels describe what the robot should decide socially, not how each joint should move.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>Action Space</h3>
+          <ul class="bullets compact">
+            <li><span class="mono">STOP</span></li>
+            <li><span class="mono">FORWARD</span></li>
+            <li><span class="mono">LEFT</span></li>
+            <li><span class="mono">RIGHT</span></li>
+            <li><span class="mono">REVIEW</span></li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>Why <span class="mono">REVIEW</span> was added</h3>
+          <ul class="bullets compact">
+            <li>Ambiguous social scenes should not always be forced into a hard binary action.</li>
+            <li><span class="mono">REVIEW</span> makes uncertainty visible instead of hiding it.</li>
+            <li>That does not solve calibration by itself, but it is still a more honest interface.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="benchmark" class="section">
+      <div class="section-head">
+        <h2>Benchmark Setup</h2>
+        <p>
+          The capstone is evaluated primarily as an offline decision study over extracted front-camera frames from curated Go1 rosbags.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card compact-card">
+          <h3>Data</h3>
+          <ul class="bullets compact">
+            <li>13 curated Go1 social-navigation bags</li>
+            <li>Decision-level labels rather than low-level control labels</li>
+            <li>Scenario types include crossing, approaching, receding, entering-late, and review-oriented cases</li>
+          </ul>
+        </article>
+
+        <article class="card compact-card">
+          <h3>Sequence Setting</h3>
+          <ul class="bullets compact">
+            <li>Sequence window length <span class="mono">10</span></li>
+            <li>Max frames per VLM call <span class="mono">5</span></li>
+            <li>Capped temporal subsampling from extracted frame windows</li>
+          </ul>
+        </article>
+
+        <article class="card compact-card">
+          <h3>Models</h3>
+          <ul class="bullets compact">
+            <li><span class="mono">Qwen3-VL-30B</span></li>
+            <li><span class="mono">InternVL-3.5-14B</span></li>
+            <li>Single-image and sequence-based prompting</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="results" class="section">
+      <div class="section-head">
+        <h2>Key Results</h2>
+        <p>
+          The numbers are more useful as diagnostic signals than as a claim that the problem is solved.
+        </p>
+      </div>
+
+      <div class="result-highlight">
+        <div class="result-block">
+          <div class="result-label">Benchmark Summary</div>
+          <ul class="bullets compact strong-list">
+            <li><strong>13 curated social navigation scenarios</strong></li>
+            <li><strong>0.60 primary bag-level consensus accuracy</strong></li>
+            <li><strong>0.60 best primary-case accuracy</strong></li>
+            <li><strong>10-frame window</strong> reduced to <strong>5-frame VLM input</strong></li>
+          </ul>
+        </div>
+        <div class="result-block">
+          <div class="result-label">How to read this</div>
+          <ul class="bullets compact">
+            <li>The benchmark shows richer decisions than a binary controller could express.</li>
+            <li>It does not show reliable enough perception to justify raw online VLM control.</li>
+            <li>Unsafe-forward behavior and inconsistent activation remained the main bottlenecks.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>Primary Metrics</h3>
+          <div class="metric-row">
+            <span>Primary Bag-Level Consensus Accuracy</span>
+            <span class="mono">0.60</span>
+          </div>
+          <div class="metric-row">
+            <span>Best Primary-Case Accuracy</span>
+            <span class="mono">0.60</span>
+          </div>
+          <div class="metric-row">
+            <span>Review Bags Without Review Consensus</span>
+            <span class="mono">1 / 3</span>
+          </div>
+          <div class="metric-row">
+            <span>Sequence Window / Max Frames</span>
+            <span class="mono">10 / 5</span>
+          </div>
+          <p class="note">
+            Saved run: <span class="mono">final_policy_v2_crossing</span>.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>Unsafe-Forward Rates on STOP-Labeled Primary Cases</h3>
+          <div class="metric-row">
+            <span>InternVL Sequence</span>
+            <span class="mono">0.610</span>
+          </div>
+          <div class="metric-row">
+            <span>InternVL Single</span>
+            <span class="mono">0.500</span>
+          </div>
+          <div class="metric-row">
+            <span>Qwen Sequence</span>
+            <span class="mono">0.432</span>
+          </div>
+          <div class="metric-row">
+            <span>Qwen Single</span>
+            <span class="mono">0.335</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Observations</h2>
+        <p>
+          The main value of the run was learning where the new interface helped and where the perception stack still failed to activate reliably.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card">
+          <h3>What improved</h3>
+          <ul class="bullets compact">
+            <li>Sequence reasoning helped in the receding-person case where both sequence methods returned <span class="mono">FORWARD</span> correctly.</li>
+            <li>The five-action interface made lateral intent and uncertainty visible instead of collapsing everything into stop/go.</li>
+            <li><span class="mono">REVIEW</span> gave the evaluator a more honest place to put ambiguity.</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h3>What remained difficult</h3>
+          <ul class="bullets compact">
+            <li>Crossing and entering-late cases still failed at the consensus level in several bags.</li>
+            <li>Sequence context did not automatically fix ambiguity; sometimes it diluted the person cue that mattered.</li>
+            <li>The interface improved faster than perception reliability did under the current sampling regime.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="deployment" class="section">
+      <div class="section-head">
+        <h2>Deployment Boundary</h2>
+        <p>
+          This phase should be described as an offline social-navigation benchmark and a high-level decision study, not as deployed raw VLM robot control.
+        </p>
+      </div>
+
+      <div class="status-grid">
+        <article class="status-card status-test">
+          <div class="status-title">WHAT WAS EVALUATED</div>
+          <h3>🧪 Offline</h3>
+          <ul class="bullets compact">
+            <li>Single-image and sequence-based social-navigation policies</li>
+            <li>Decision labels over curated Go1 rosbag scenarios</li>
+          </ul>
+        </article>
+
+        <article class="status-card status-warn">
+          <div class="status-title">WHAT WAS NOT DONE</div>
+          <h3>⚠️ Not Deployed</h3>
+          <ul class="bullets compact">
+            <li>No full closed-loop VLM deployment on Go1</li>
+            <li>No raw VLM motor control path</li>
+          </ul>
+        </article>
+
+        <article class="status-card status-live">
+          <div class="status-title">PROPOSED SYSTEM VIEW</div>
+          <h3>✔ Safety-Projected Path</h3>
+          <ul class="bullets compact">
+            <li>Fast controller handles real-time motion and local safety</li>
+            <li>Slower VLM layer provides semantic guidance and review signals</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="callout-card">
+        <h3>Why the split matters</h3>
+        <p>
+          Raw VLM output is too slow and too unconstrained to trust as low-level control. The more defensible use is a slower semantic layer whose outputs are projected through a safety boundary before anything executable is considered.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Technical Notes</h2>
+        <p>
+          The detailed failure cases, experiment tables, and deployment notes are kept in the supporting documentation.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card compact-card">
+          <h3>Supporting notes</h3>
+          <div class="link-column">
+            <a class="text-link" href="docs_note/vlm_social_navigation.md">VLM study summary →</a>
+            <a class="text-link" href="docs_note/experiments.md">Experiments and results →</a>
+            <a class="text-link" href="docs_note/deployment.md">Deployment boundary →</a>
+            <a class="text-link" href="docs_note/model.md">Model notes →</a>
+          </div>
+        </article>
+
+        <article class="card compact-card">
+          <h3>Connection back to Study 1</h3>
+          <ul class="bullets compact">
+            <li>The VLM layer assumes there is already a motion stack underneath it.</li>
+            <li>What changes here is not the existence of a controller, but the decision representation around people.</li>
+            <li>The earlier reactive signals still matter because the semantic layer does not replace local safety.</li>
+          </ul>
+          <div class="link-row">
+            <a class="text-link" href="imitation-learning.html">Open imitation-learning study →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span class="mono">©</span> <span id="year"></span> GO1 / CAIRO LAB — Built by Yuni Wu
+      </div>
+      <div class="footer-right">
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
