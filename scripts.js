@@ -375,6 +375,22 @@
     const parentHref = params.get("parentHref") || "index.html";
     const focus = params.get("focus");
 
+    const isVlmNote =
+      parent === "VLM Social Navigation" ||
+      (doc && (
+        doc.includes("vlm_social_navigation") ||
+        doc.includes("future_work") ||
+        (focus && (
+          focus.includes("benchmark") ||
+          focus.includes("vlm") ||
+          focus.includes("what-the-vlm-capstone-proposes")
+        ))
+      ));
+
+    if (isVlmNote) {
+      document.body.classList.add("theme-vlm");
+    }
+
     const noteTitle = $("#noteTitle");
     const noteCrumbCurrent = $("#noteCrumbCurrent");
     const noteSubtitle = $("#noteSubtitle");
