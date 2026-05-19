@@ -618,6 +618,27 @@ main{ max-width: 1100px; margin: 0 auto; padding: 22px 18px 56px; }
     height: 134px;
     transform: translate(-50%, -40%);
   }
+  .metric-row{
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .media-top{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .media-actions{
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .markdown-card{
+    padding: 16px;
+  }
+  .footer{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
   .go1-meta-top{
     top: 12px;
     left: 50%;

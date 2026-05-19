@@ -36,8 +36,6 @@ Current notebook topics include:
 
 - `assets/`
   - site images, diagrams, and local media
-- `presentations/`
-  - not used as a separate directory right now; slide artifacts currently live under `assets/`
 - `assets/vlm-final-report.pptx`
   - editable source slides for the final presentation
 - `assets/vlm-final-report.pdf`

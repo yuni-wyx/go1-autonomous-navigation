@@ -289,7 +289,7 @@
         ['next', 'see how the project changed once people entered the scene']
       ],
       linkHref: 'imitation-learning.html',
-      linkText: 'View Study 1 →'
+      linkText: 'Imitation Learning →'
     },
     social: {
       label: 'VLM SOCIAL NAVIGATION',
@@ -307,7 +307,7 @@
         ['boundary', 'high-level study, not raw online VLM control']
       ],
       linkHref: 'vlm-social-navigation.html',
-      linkText: 'View Study 2 →'
+      linkText: 'VLM Social Navigation →'
     },
     boundary: {
       label: 'FAST CONTROLLER + SLOWER SEMANTIC LAYER',
@@ -325,7 +325,7 @@
         ['boundary', 'raw high-level output does not directly drive motors']
       ],
       linkHref: 'vlm-social-navigation.html#deployment',
-      linkText: 'Read Details →'
+      linkText: 'Deployment Boundary →'
     }
   };
 

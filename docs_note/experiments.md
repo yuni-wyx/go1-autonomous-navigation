@@ -2,7 +2,8 @@
 
 ## Page Summary
 
-The later VLM capstone is evaluated mainly as an **offline social-navigation benchmark** over curated Go1 rosbag scenarios.
+The reported VLM benchmark here is an **offline social-navigation benchmark** over curated Go1 rosbag scenarios.
+The broader Study 2 work also includes controller-side integration experiments and safety-projected online decision paths, but this page stays focused on the saved benchmark evidence.
 The point of this page is not to present a polished leaderboard. It is to document what improved, what did not, and what the failure modes suggest.
 
 ---
